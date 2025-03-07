@@ -99,7 +99,7 @@ class _LandingPageState extends State<LandingPage> {
                   text: "Sign up",
                   recognizer: TapGestureRecognizer()
                     ..onTap = () {
-                      Navigator.pushNamed(context, "/register");
+                      Navigator.pushNamed(context, "/home");
                     },
                   style: GoogleFonts.notoSans(
                     fontSize: 15,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:mobile_project/pages/home/home.dart';
 import 'package:mobile_project/pages/landing/landing.dart';
 import 'firebase_options.dart';
 
@@ -26,7 +27,14 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const LandingPage(),
+      // home: const LandingPage(),
+      initialRoute: '/landing',
+      routes: pagesRoutes,
     );
   }
 }
+
+Map<String, Widget Function(BuildContext)> pagesRoutes = {
+  '/landing': (context) => const LandingPage(),
+  '/home': (context) => const HomePage(),
+};
