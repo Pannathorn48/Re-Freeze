@@ -31,7 +31,7 @@ class IconDialog extends StatelessWidget {
               style: GoogleFonts.notoSansThai(
                   fontSize: 20,
                   color: titleColor,
-                  fontWeight: FontWeight.bold)),
+                  fontWeight: FontWeight.w500)),
         ],
       )),
       content: Text(content),

@@ -17,7 +17,9 @@ class InputFeild extends StatelessWidget {
       this.obscureText,
       this.keyboardType,
       this.suffixIcon,
-      required this.controller});
+      required this.controller}
+    );
+  
 
   @override
   Widget build(BuildContext context) {
