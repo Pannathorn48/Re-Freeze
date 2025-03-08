@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_project/components/button.dart';
+import 'package:mobile_project/components/icon_dialog.dart';
 import 'package:mobile_project/components/input_feild.dart';
+import 'package:mobile_project/services/validator.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -28,12 +30,7 @@ class _LoginFormState extends State<LoginForm> {
               controller: emailController,
               keyboardType: TextInputType.emailAddress,
               hintText: "Enter your email",
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'please enter your email';
-                }
-                return null;
-              },
+              validator: Validator.validateEmail,
             ),
             const SizedBox(
               height: 15,
@@ -76,13 +73,32 @@ class _LoginFormState extends State<LoginForm> {
                     switch (e.code) {
                       case 'invalid-email':
                       case 'invalid-credential':
+                        showDialog(
+                            // ignore: use_build_context_synchronously
+                            context: context,
+                            builder: (context) => const IconDialog(
+                                icon: Icon(Icons.error),
+                                title: "Invalid Credential",
+                                titleColor: Colors.redAccent,
+                                content:
+                                    "Your email or password is incorrect , please try again",
+                                actionText: "Try again",
+                                actionColor: Colors.redAccent));
                         break;
                       case 'network-request-failed':
+                        showDialog(
+                            // ignore: use_build_context_synchronously
+                            context: context,
+                            builder: (context) => const IconDialog(
+                                icon: Icon(Icons.error),
+                                title: "Network Error",
+                                titleColor: Colors.redAccent,
+                                content:
+                                    "It seem to be a problem with network , please try again later",
+                                actionText: "Try again",
+                                actionColor: Colors.redAccent));
                         break;
                     }
-
-                    debugPrint("Code: ${e.code}");
-                    debugPrint('Error: $e');
                   }
                 }
               },

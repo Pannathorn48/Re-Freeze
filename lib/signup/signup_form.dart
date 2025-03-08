@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_project/components/button.dart';
+import 'package:mobile_project/components/icon_dialog.dart';
 import 'package:mobile_project/components/input_feild.dart';
 import 'package:mobile_project/services/validator.dart';
 
@@ -84,9 +85,18 @@ class _SignUpFormState extends State<SignUpForm> {
                       // ignore: use_build_context_synchronously
                       Navigator.pushNamed(context, '/home');
                     }
-                  } catch (error) {
-                    // Handle error here
-                    print("Failed to sign up: $error");
+                  } on FirebaseAuthException catch (error) {
+                    showDialog(
+                        // ignore: use_build_context_synchronously
+                        context: context,
+                        builder: (context) => IconDialog(
+                              icon: const Icon(Icons.error),
+                              title: "Failed to sign up",
+                              titleColor: Colors.redAccent,
+                              content: error.message!,
+                              actionText: "Try again",
+                              actionColor: Colors.redAccent,
+                            ));
                   }
                 }
               },

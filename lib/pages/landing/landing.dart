@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_project/components/button.dart';
+import 'package:mobile_project/components/icon_dialog.dart';
 
 class LandingPage extends StatefulWidget {
   const LandingPage({super.key});
@@ -43,7 +44,8 @@ class _LandingPageState extends State<LandingPage> {
             ),
             Center(
               child: Button(
-                onPressed: () {},
+                onPressed: () {
+                },
                 text: "Get start with Google",
                 width: 335,
                 height: 40,
