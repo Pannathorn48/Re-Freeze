@@ -44,7 +44,7 @@ class _LandingPageState extends State<LandingPage> {
             Center(
               child: Button(
                 onPressed: () {},
-                text: "Sign up with Google",
+                text: "Get start with Google",
                 width: 335,
                 height: 40,
                 fontColor: Colors.black54,
@@ -57,12 +57,14 @@ class _LandingPageState extends State<LandingPage> {
             ),
             Center(
                 child: Button(
-                  onPressed: () {},
-                  text: "Login",
-                  width: 335,
-                  height: 40,
-                  fontColor: Colors.black54,
-                  borderColor: Colors.black,
+              onPressed: () {
+                Navigator.pushNamed(context, '/login');
+              },
+              text: "Login",
+              width: 335,
+              height: 40,
+              fontColor: Colors.black54,
+              borderColor: Colors.black,
             )),
             const SizedBox(
               height: 20,

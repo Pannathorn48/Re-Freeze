@@ -12,6 +12,7 @@ class LoginForm extends StatefulWidget {
 }
 
 class _LoginFormState extends State<LoginForm> {
+  bool _isVisible = false;
   final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
@@ -21,6 +22,7 @@ class _LoginFormState extends State<LoginForm> {
           children: [
             InputFeild(
               label: "Username",
+              keyboardType: TextInputType.emailAddress,
               hintText: "Enter your username",
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -35,6 +37,15 @@ class _LoginFormState extends State<LoginForm> {
             InputFeild(
               label: "Password",
               hintText: "Enter your password",
+              obscureText: !_isVisible,
+              suffixIcon: IconButton(
+                  onPressed: () {
+                    setState(() {
+                      _isVisible = !_isVisible;
+                    });
+                  },
+                  icon: Icon(
+                      !_isVisible ? Icons.visibility : Icons.visibility_off)),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'please enter your password';
@@ -52,6 +63,7 @@ class _LoginFormState extends State<LoginForm> {
               height: 40,
               fontColor: Colors.white,
               backgroundColor: Theme.of(context).colorScheme.primary,
+              overlayColor: Colors.white,
               borderColor: Colors.black,
             ),
             const SizedBox(

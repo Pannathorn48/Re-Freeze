@@ -10,6 +10,7 @@ class Button extends StatelessWidget {
   final Color fontColor;
   final Color? backgroundColor;
   final Color borderColor;
+  final Color? overlayColor;
   const Button(
       {super.key,
       required this.onPressed,
@@ -19,7 +20,8 @@ class Button extends StatelessWidget {
       required this.height,
       required this.fontColor,
       this.backgroundColor,
-      required this.borderColor});
+      required this.borderColor,
+      this.overlayColor});
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +30,7 @@ class Button extends StatelessWidget {
             width: width,
             child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  overlayColor: Colors.white,
+                  overlayColor: overlayColor,
                   backgroundColor: backgroundColor,
                   side: BorderSide(color: borderColor, width: 0.05),
                   elevation: 2,
@@ -47,6 +49,7 @@ class Button extends StatelessWidget {
             width: width,
             child: ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
+                overlayColor: overlayColor,
                 backgroundColor: backgroundColor,
                 side: BorderSide(color: borderColor, width: 0.05),
                 elevation: 1.5,

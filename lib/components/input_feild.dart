@@ -5,8 +5,17 @@ class InputFeild extends StatelessWidget {
   final String label;
   final String hintText;
   final String? Function(String?)? validator;
+  final bool? obscureText;
+  final TextInputType? keyboardType;
+  final Widget? suffixIcon;
   const InputFeild(
-      {super.key, required this.label, this.validator, required this.hintText});
+      {super.key,
+      required this.label,
+      this.validator,
+      required this.hintText,
+      this.obscureText,
+      this.keyboardType,
+      this.suffixIcon});
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +30,8 @@ class InputFeild extends StatelessWidget {
           ),
           TextFormField(
               decoration: InputDecoration(
+                  suffixIcon: suffixIcon,
+                  suffixIconColor: suffixIcon != null ? Colors.black26 : null,
                   enabledBorder: OutlineInputBorder(
                     borderSide: const BorderSide(color: Colors.black38),
                     borderRadius: BorderRadius.circular(10),
@@ -32,6 +43,8 @@ class InputFeild extends StatelessWidget {
                   hintText: hintText,
                   hintStyle: GoogleFonts.notoSans(
                       fontSize: 15, color: Theme.of(context).hintColor)),
+              obscureText: obscureText ?? false,
+              keyboardType: keyboardType,
               validator: validator),
         ],
       ),

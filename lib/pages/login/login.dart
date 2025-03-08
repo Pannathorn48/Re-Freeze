@@ -50,19 +50,23 @@ class _LoginPageState extends State<LoginPage> {
                       height: 70,
                     ),
                     Center(
-                      child: RichText(text: TextSpan(
-                        text: "Don't have an account? ",
-                        style: GoogleFonts.notoSansThai(fontSize: 16, color: Colors.black),
-                        children: [
-                          TextSpan(
-                            recognizer: TapGestureRecognizer()..onTap = () {
-                              Navigator.pushNamed(context, '/signup');
-                            },
-                            text: "Sign up",
-                            style: GoogleFonts.notoSansThai(fontSize: 16, color: Theme.of(context).colorScheme.primary),
-                          )
-                        ]
-                      )),
+                      child: RichText(
+                          text: TextSpan(
+                              text: "Don't have an account? ",
+                              style: GoogleFonts.notoSansThai(
+                                  fontSize: 16, color: Colors.black),
+                              children: [
+                            TextSpan(
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  Navigator.pushNamed(context, '/home');
+                                },
+                              text: "Sign up",
+                              style: GoogleFonts.notoSansThai(
+                                  fontSize: 16,
+                                  color: Theme.of(context).colorScheme.primary),
+                            )
+                          ])),
                     )
                   ],
                 ),

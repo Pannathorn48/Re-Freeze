@@ -28,8 +28,7 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      // home: const LandingPage(),
-      initialRoute: '/login',
+      initialRoute: '/landing',
       routes: pagesRoutes,
     );
   }
