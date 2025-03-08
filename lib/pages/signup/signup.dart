@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mobile_project/signup/signup_form.dart';
+import 'package:mobile_project/pages/signup/signup_form.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
