@@ -49,7 +49,6 @@ class _SignUpFormState extends State<SignUpForm> {
                 }
                 return null;
               },
-              
             ),
             const SizedBox(
               height: 15,
@@ -82,6 +81,7 @@ class _SignUpFormState extends State<SignUpForm> {
                     await FirebaseAuth.instance.createUserWithEmailAndPassword(
                         email: email, password: password);
                     if (mounted) {
+                      // ignore: use_build_context_synchronously
                       Navigator.pushNamed(context, '/home');
                     }
                   } catch (error) {

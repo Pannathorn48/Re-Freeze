@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_project/components/button.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class LandingPage extends StatefulWidget {
   const LandingPage({super.key});

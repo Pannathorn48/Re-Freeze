@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      initialRoute: '/signup',
+      initialRoute: '/landing',
       // FirebaseAuth.instance.currentUser == null ? '/signup' : '/home',
       routes: pagesRoutes,
     );

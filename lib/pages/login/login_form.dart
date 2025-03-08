@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -61,8 +62,29 @@ class _LoginFormState extends State<LoginForm> {
               height: 30,
             ),
             Button(
-              onPressed: () {
-                _formKey.currentState!.validate();
+              onPressed: () async {
+                if (_formKey.currentState!.validate()) {
+                  try {
+                    await FirebaseAuth.instance.signInWithEmailAndPassword(
+                        email: emailController.text,
+                        password: passwordController.text);
+                    if (mounted) {
+                      // ignore: use_build_context_synchronously
+                      Navigator.pushNamed(context, '/home');
+                    }
+                  } on FirebaseAuthException catch (e) {
+                    switch (e.code) {
+                      case 'invalid-email':
+                      case 'invalid-credential':
+                        break;
+                      case 'network-request-failed':
+                        break;
+                    }
+
+                    debugPrint("Code: ${e.code}");
+                    debugPrint('Error: $e');
+                  }
+                }
               },
               text: "Login",
               width: 385,
