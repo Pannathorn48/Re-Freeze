@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mobile_project/components/button.dart';
 
 class LandingPage extends StatefulWidget {
   const LandingPage({super.key});
@@ -41,52 +42,28 @@ class _LandingPageState extends State<LandingPage> {
               height: 30,
             ),
             Center(
-              child: SizedBox(
+              child: Button(
+                onPressed: () {},
+                text: "Sign up with Google",
                 width: 335,
-                child: ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    side: const BorderSide(color: Colors.black, width: 0.05),
-                    elevation: 1.5,
-                    padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
-                    shadowColor: null,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  onPressed: () {},
-                  icon: SvgPicture.asset(
-                    "assets/icons/google.svg",
-                    width: 25,
-                    height: 25,
-                  ),
-                  label: Text("Get start with Google",
-                      style: GoogleFonts.notoSans(
-                          fontSize: 17, color: Colors.black54)),
-                ),
+                height: 40,
+                fontColor: Colors.black54,
+                borderColor: Colors.black,
+                icon: SvgPicture.asset("assets/icons/google.svg"),
               ),
             ),
             const SizedBox(
               height: 18,
             ),
             Center(
-              child: SizedBox(
-                width: 335,
-                child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      side: const BorderSide(color: Colors.black, width: 0.05),
-                      elevation: 2,
-                      padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
-                      shadowColor: Colors.black,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    onPressed: () {},
-                    child: Text("Log in",
-                        style: GoogleFonts.notoSans(
-                            fontSize: 17, color: Colors.black54))),
-              ),
-            ),
+                child: Button(
+                  onPressed: () {},
+                  text: "Login",
+                  width: 335,
+                  height: 40,
+                  fontColor: Colors.black54,
+                  borderColor: Colors.black,
+            )),
             const SizedBox(
               height: 20,
             ),
