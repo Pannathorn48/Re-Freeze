@@ -13,6 +13,8 @@ class LoginForm extends StatefulWidget {
 
 class _LoginFormState extends State<LoginForm> {
   bool _isVisible = false;
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
@@ -22,6 +24,7 @@ class _LoginFormState extends State<LoginForm> {
           children: [
             InputFeild(
               label: "Email",
+              controller: emailController,
               keyboardType: TextInputType.emailAddress,
               hintText: "Enter your email",
               validator: (value) {
@@ -36,6 +39,7 @@ class _LoginFormState extends State<LoginForm> {
             ),
             InputFeild(
               label: "Password",
+              controller: passwordController,
               hintText: "Enter your password",
               obscureText: !_isVisible,
               suffixIcon: IconButton(

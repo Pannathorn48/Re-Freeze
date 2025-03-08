@@ -27,7 +27,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).colorScheme.primary)),
               const SizedBox(
-                height: 30,
+                height: 25,
               ),
               Container(
                 padding: const EdgeInsets.all(20),
@@ -45,6 +45,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       height: 30,
                     ),
                     const SignUpForm(),
+                    
                   ],
                 ),
               )

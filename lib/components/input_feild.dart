@@ -8,6 +8,7 @@ class InputFeild extends StatelessWidget {
   final bool? obscureText;
   final TextInputType? keyboardType;
   final Widget? suffixIcon;
+  final TextEditingController controller;
   const InputFeild(
       {super.key,
       required this.label,
@@ -15,7 +16,8 @@ class InputFeild extends StatelessWidget {
       required this.hintText,
       this.obscureText,
       this.keyboardType,
-      this.suffixIcon});
+      this.suffixIcon,
+      required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +31,7 @@ class InputFeild extends StatelessWidget {
             height: 5,
           ),
           TextFormField(
+              controller: controller,
               decoration: InputDecoration(
                   suffixIcon: suffixIcon,
                   suffixIconColor: suffixIcon != null ? Colors.black26 : null,

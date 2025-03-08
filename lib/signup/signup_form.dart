@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -14,14 +15,18 @@ class SignUpForm extends StatefulWidget {
 
 class _SignUpFormState extends State<SignUpForm> {
   final _formKey = GlobalKey<FormState>();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Form(
         key: _formKey,
         child: Column(
           children: [
-            const InputFeild(
+            InputFeild(
               label: "Email",
+              controller: emailController,
               keyboardType: TextInputType.emailAddress,
               hintText: "Enter your email",
               validator: Validator.validateEmail,
@@ -31,6 +36,7 @@ class _SignUpFormState extends State<SignUpForm> {
             ),
             InputFeild(
               label: "Password",
+              controller: passwordController,
               hintText: "Enter your password",
               keyboardType: TextInputType.visiblePassword,
               obscureText: true,
@@ -38,20 +44,28 @@ class _SignUpFormState extends State<SignUpForm> {
                 if (value == null || value.isEmpty) {
                   return 'please enter your password';
                 }
+                if (value.length < 6) {
+                  return 'password must be at least 6 characters';
+                }
                 return null;
               },
+              
             ),
             const SizedBox(
               height: 15,
             ),
             InputFeild(
               label: "Confirm Password",
+              controller: confirmPasswordController,
               hintText: "Enter your password",
               keyboardType: TextInputType.visiblePassword,
               obscureText: true,
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'please enter your password';
+                }
+                if (value != passwordController.text) {
+                  return 'password does not match';
                 }
                 return null;
               },
@@ -60,8 +74,21 @@ class _SignUpFormState extends State<SignUpForm> {
               height: 30,
             ),
             Button(
-              onPressed: () {
-                _formKey.currentState!.validate();
+              onPressed: () async {
+                if (_formKey.currentState!.validate()) {
+                  final email = emailController.text;
+                  final password = passwordController.text;
+                  try {
+                    await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                        email: email, password: password);
+                    if (mounted) {
+                      Navigator.pushNamed(context, '/home');
+                    }
+                  } catch (error) {
+                    // Handle error here
+                    print("Failed to sign up: $error");
+                  }
+                }
               },
               text: "Next",
               width: 385,
