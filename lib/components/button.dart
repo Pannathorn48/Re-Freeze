@@ -28,6 +28,7 @@ class Button extends StatelessWidget {
             width: width,
             child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
+                  overlayColor: Colors.white,
                   backgroundColor: backgroundColor,
                   side: BorderSide(color: borderColor, width: 0.05),
                   elevation: 2,

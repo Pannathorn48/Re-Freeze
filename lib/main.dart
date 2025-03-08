@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:mobile_project/pages/home/home.dart';
 import 'package:mobile_project/pages/landing/landing.dart';
+import 'package:mobile_project/pages/login/login.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       // home: const LandingPage(),
-      initialRoute: '/landing',
+      initialRoute: '/login',
       routes: pagesRoutes,
     );
   }
@@ -37,4 +38,5 @@ class MyApp extends StatelessWidget {
 Map<String, Widget Function(BuildContext)> pagesRoutes = {
   '/landing': (context) => const LandingPage(),
   '/home': (context) => const HomePage(),
+  '/login': (context) => const LoginPage(),
 };

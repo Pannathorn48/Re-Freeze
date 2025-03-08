@@ -1,0 +1,40 @@
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+class InputFeild extends StatelessWidget {
+  final String label;
+  final String hintText;
+  final String? Function(String?)? validator;
+  const InputFeild(
+      {super.key, required this.label, this.validator, required this.hintText});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label, style: GoogleFonts.notoSansThai(fontSize: 15)),
+          const SizedBox(
+            height: 5,
+          ),
+          TextFormField(
+              decoration: InputDecoration(
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(color: Colors.black38),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  border: OutlineInputBorder(
+                    borderSide: const BorderSide(color: Colors.black38),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  hintText: hintText,
+                  hintStyle: GoogleFonts.notoSans(
+                      fontSize: 15, color: Theme.of(context).hintColor)),
+              validator: validator),
+        ],
+      ),
+    );
+  }
+}
