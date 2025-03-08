@@ -59,7 +59,7 @@ class _LoginPageState extends State<LoginPage> {
                             TextSpan(
                               recognizer: TapGestureRecognizer()
                                 ..onTap = () {
-                                  Navigator.pushNamed(context, '/home');
+                                  Navigator.pushNamed(context, '/signup');
                                 },
                               text: "Sign up",
                               style: GoogleFonts.notoSansThai(
