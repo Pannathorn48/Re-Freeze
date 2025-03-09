@@ -90,12 +90,10 @@ class _SignUpFormState extends State<SignUpForm> {
                     await FirebaseAuth.instance.createUserWithEmailAndPassword(
                         email: email, password: password);
                     if (mounted) {
-                      // ignore: use_build_context_synchronously
                       Navigator.pushNamed(context, '/home');
                     }
                   } on FirebaseAuthException catch (error) {
                     showDialog(
-                        // ignore: use_build_context_synchronously
                         context: context,
                         builder: (context) => IconDialog(
                               icon: const Icon(Icons.error),

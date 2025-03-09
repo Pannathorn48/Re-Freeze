@@ -25,6 +25,7 @@ class _LoginFormState extends State<LoginForm> {
     passwordController.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -72,7 +73,6 @@ class _LoginFormState extends State<LoginForm> {
                         email: emailController.text,
                         password: passwordController.text);
                     if (mounted) {
-                      // ignore: use_build_context_synchronously
                       Navigator.pushNamed(context, '/home');
                     }
                   } on FirebaseAuthException catch (e) {
@@ -80,7 +80,6 @@ class _LoginFormState extends State<LoginForm> {
                       case 'invalid-email':
                       case 'invalid-credential':
                         showDialog(
-                            // ignore: use_build_context_synchronously
                             context: context,
                             builder: (context) => const IconDialog(
                                 icon: Icon(Icons.error),
@@ -93,7 +92,6 @@ class _LoginFormState extends State<LoginForm> {
                         break;
                       case 'network-request-failed':
                         showDialog(
-                            // ignore: use_build_context_synchronously
                             context: context,
                             builder: (context) => const IconDialog(
                                 icon: Icon(Icons.error),
