@@ -5,7 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_project/components/button.dart';
 import 'package:mobile_project/components/icon_dialog.dart';
 import 'package:mobile_project/components/input_feild.dart';
-import 'package:mobile_project/services/validator.dart';
+import 'package:mobile_project/services/login_service.dart';
+import 'package:mobile_project/services/validator_service.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -69,11 +70,12 @@ class _LoginFormState extends State<LoginForm> {
               onPressed: () async {
                 if (_formKey.currentState!.validate()) {
                   try {
-                    await FirebaseAuth.instance.signInWithEmailAndPassword(
-                        email: emailController.text,
-                        password: passwordController.text);
-                    if (mounted) {
-                      Navigator.pushNamed(context, '/home');
+                    final userCredential = await FirebaseAuth.instance
+                        .signInWithEmailAndPassword(
+                            email: emailController.text,
+                            password: passwordController.text);
+                    if (userCredential.user != null && mounted) {
+                      Navigator.of(context).pushNamed("/home");
                     }
                   } on FirebaseAuthException catch (e) {
                     switch (e.code) {
@@ -125,7 +127,22 @@ class _LoginFormState extends State<LoginForm> {
               height: 25,
             ),
             Button(
-              onPressed: () {},
+              onPressed: () async {
+                try {
+                  await GoogleAuth.signInWithGoogle();
+                } catch (error) {
+                  showDialog(
+                      context: context,
+                      builder: (context) => const IconDialog(
+                            icon: Icon(Icons.error),
+                            title: "Failed to sign up",
+                            titleColor: Colors.redAccent,
+                            content: "something went wrong , please try again",
+                            actionText: "Try again",
+                            actionColor: Colors.redAccent,
+                          ));
+                }
+              },
               text: "Login with Google",
               icon: SvgPicture.asset("assets/icons/google.svg"),
               width: 385,

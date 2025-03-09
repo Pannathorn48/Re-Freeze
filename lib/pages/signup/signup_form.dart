@@ -5,7 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_project/components/button.dart';
 import 'package:mobile_project/components/icon_dialog.dart';
 import 'package:mobile_project/components/input_feild.dart';
-import 'package:mobile_project/services/validator.dart';
+import 'package:mobile_project/services/login_service.dart';
+import 'package:mobile_project/services/validator_service.dart';
 
 class SignUpForm extends StatefulWidget {
   const SignUpForm({super.key});
@@ -125,7 +126,22 @@ class _SignUpFormState extends State<SignUpForm> {
               height: 25,
             ),
             Button(
-              onPressed: () {},
+              onPressed: () async {
+                try {
+                  await GoogleAuth.signInWithGoogle();
+                } catch (error) {
+                  showDialog(
+                      context: context,
+                      builder: (context) => const IconDialog(
+                            icon: Icon(Icons.error),
+                            title: "Failed to sign up",
+                            titleColor: Colors.redAccent,
+                            content: "something went wrong , please try again",
+                            actionText: "Try again",
+                            actionColor: Colors.redAccent,
+                          ));
+                }
+              },
               text: "Sign up with Google",
               icon: SvgPicture.asset("assets/icons/google.svg"),
               width: 385,

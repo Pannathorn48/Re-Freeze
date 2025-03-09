@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_project/components/button.dart';
 import 'package:mobile_project/components/icon_dialog.dart';
+import 'package:mobile_project/services/login_service.dart';
 
 class LandingPage extends StatefulWidget {
   const LandingPage({super.key});
@@ -44,7 +45,22 @@ class _LandingPageState extends State<LandingPage> {
             ),
             Center(
               child: Button(
-                onPressed: () {
+                onPressed: () async {
+                  try {
+                    await GoogleAuth.signInWithGoogle();
+                  } catch (error) {
+                    showDialog(
+                        context: context,
+                        builder: (context) => const IconDialog(
+                              icon: Icon(Icons.error),
+                              title: "Failed to sign up",
+                              titleColor: Colors.redAccent,
+                              content:
+                                  "something went wrong , please try again",
+                              actionText: "Try again",
+                              actionColor: Colors.redAccent,
+                            ));
+                  }
                 },
                 text: "Get start with Google",
                 width: 335,
