@@ -5,6 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_project/components/button.dart';
 import 'package:mobile_project/components/icon_dialog.dart';
 import 'package:mobile_project/components/input_feild.dart';
+import 'package:mobile_project/controller/user_controller.dart';
+import 'package:mobile_project/models/user.dart';
 import 'package:mobile_project/services/login_service.dart';
 import 'package:mobile_project/services/validator_service.dart';
 
@@ -16,6 +18,7 @@ class SignUpForm extends StatefulWidget {
 }
 
 class _SignUpFormState extends State<SignUpForm> {
+  final UserDatabase _userDatabase = UserDatabase();
   final _formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -88,8 +91,18 @@ class _SignUpFormState extends State<SignUpForm> {
                   final email = emailController.text;
                   final password = passwordController.text;
                   try {
-                    await FirebaseAuth.instance.createUserWithEmailAndPassword(
-                        email: email, password: password);
+                    final userCred = await FirebaseAuth.instance
+                        .createUserWithEmailAndPassword(
+                            email: email, password: password);
+                    if (userCred.user?.uid != null) {
+                      PlatformUser? currentUser =
+                          await _userDatabase.getUser(userCred.user!.uid);
+                      if (currentUser?.displayName == null) {
+                        _userDatabase.initUser(userCred.user!.uid,
+                            userCred.user!.displayName ?? "");
+                        Navigator.pushNamed(context, "/signup/display-name");
+                      } else {}
+                    }
                     if (mounted) {
                       Navigator.pushNamed(context, '/home');
                     }
