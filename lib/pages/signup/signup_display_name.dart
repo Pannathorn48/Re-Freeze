@@ -81,19 +81,6 @@ class _SetUpDisplayNamePageState extends State<SetUpDisplayNamePage> {
           ),
         ),
       ),
-      // floatingActionButton: Padding(
-      //   padding: const EdgeInsets.all(8.0),
-      //   child: Button(
-      //     height: 37,
-      //     width: 150,
-      //     text: "Next",
-      //     fontColor: Colors.white,
-      //     overlayColor: Colors.white,
-      //     backgroundColor: Theme.of(context).colorScheme.primary,
-      //     borderColor: Colors.black,
-      //     onPressed: () {},
-      //   ),
-      // ),
     );
   }
 }

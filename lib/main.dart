@@ -5,6 +5,7 @@ import 'package:mobile_project/pages/landing/landing.dart';
 import 'package:mobile_project/pages/login/login.dart';
 import 'package:mobile_project/pages/signup/signup.dart';
 import 'package:mobile_project/pages/signup/signup_display_name.dart';
+import 'package:mobile_project/pages/signup/signup_profile.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -30,7 +31,7 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      initialRoute: '/signup/display-name',
+      initialRoute: '/signup/profile',
       // FirebaseAuth.instance.currentUser == null ? '/signup' : '/home',
       routes: pagesRoutes,
     );
@@ -43,4 +44,5 @@ Map<String, Widget Function(BuildContext)> pagesRoutes = {
   '/login': (context) => const LoginPage(),
   '/signup': (context) => const SignUpPage(),
   '/signup/display-name': (context) => const SetUpDisplayNamePage(),
+  '/signup/profile': (context) => const SignupProfilePage(),
 };
