@@ -6,6 +6,7 @@ import 'package:mobile_project/pages/login/login_page.dart';
 import 'package:mobile_project/pages/signup/signup_page.dart';
 import 'package:mobile_project/pages/signup/signup_display_name_page.dart';
 import 'package:mobile_project/pages/signup/signup_profile_page.dart';
+import 'package:mobile_project/services/custom_navbar.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -31,7 +32,8 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      initialRoute: '/item-list',
+      home: const BottomNavBar(),
+      // initialRoute: '/item-list',
       // FirebaseAuth.instance.currentUser == null ? '/signup' : '/home',
       routes: pagesRoutes,
     );

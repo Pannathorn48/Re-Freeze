@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mobile_project/components/custom_bottom_sheet.dart';
-import 'package:mobile_project/components/custom_bottom_sheet_input.dart';
 import 'package:mobile_project/models/item.dart';
 import 'package:mobile_project/pages/item-list/_item_add_dialog.dart';
 import 'package:mobile_project/pages/item-list/_item_edit_bottom_sheet.dart';
