@@ -75,7 +75,10 @@ class _AddItemDialogState extends State<AddItemDialog> {
         children: [
           Text(label, style: GoogleFonts.notoSansThai(fontSize: 17)),
           const SizedBox(height: 10),
-          InputFieldRounded(controller: controller)
+          InputFieldRounded(
+            controller: controller,
+            centerText: true,
+          )
         ],
       ),
     );
@@ -114,6 +117,9 @@ class _AddItemDialogState extends State<AddItemDialog> {
                         fontSize: 17,
                         color: Theme.of(context).colorScheme.primary),
                     onChanged: (Tag? newValue) {
+                      if (newValue != null && !tags.contains(newValue)) {
+                        tags.add(newValue);
+                      }
                       setState(() {
                         dropDownValue = newValue;
                       });
@@ -258,6 +264,35 @@ class _AddItemDialogState extends State<AddItemDialog> {
                         const SizedBox(height: 10),
                         Center(child: _openTageSelector(context: context)),
                         const SizedBox(height: 10),
+                        SizedBox(
+                          height: 50,
+                          width: double.infinity,
+                          child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: tags.length,
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(0, 0, 10, 0),
+                                  child: Chip(
+                                    side: BorderSide(
+                                        color: tags[index].color, width: 1),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(20)),
+                                    backgroundColor: tags[index].color,
+                                    label: Text(
+                                      tags[index].name,
+                                      style: GoogleFonts.notoSansThai(
+                                          color: Colors.white, fontSize: 14),
+                                    ),
+                                  ),
+                                );
+                              }),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -279,7 +314,9 @@ class _AddItemDialogState extends State<AddItemDialog> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Button(
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
                                 text: "ยกเลิก",
                                 width: 150,
                                 height: 30,

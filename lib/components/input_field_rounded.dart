@@ -4,11 +4,14 @@ import 'package:google_fonts/google_fonts.dart';
 class InputFieldRounded extends StatelessWidget {
   final String? hintText;
   final TextEditingController controller;
-  const InputFieldRounded({super.key, required this.controller, this.hintText});
+  final bool? centerText;
+  const InputFieldRounded(
+      {super.key, required this.controller, this.hintText, this.centerText});
 
   @override
   Widget build(BuildContext context) {
     return TextField(
+      textAlign: centerText == true ? TextAlign.center : TextAlign.start,
       style: GoogleFonts.notoSansThai(),
       controller: controller,
       decoration: InputDecoration(

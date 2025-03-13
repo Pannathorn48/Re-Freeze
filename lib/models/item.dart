@@ -41,4 +41,12 @@ class Tag {
       color: Color(json['color']),
     );
   }
+
+  @override
+  bool operator ==(Object other) {
+    return name == (other as Tag).name;
+  }
+
+  @override
+  int get hashCode => name.hashCode ^ color.hashCode;
 }
