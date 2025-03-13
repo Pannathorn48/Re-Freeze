@@ -253,7 +253,7 @@ class _ItemListPageState extends State<ItemListPage> {
           showDialog(
               context: context,
               builder: (context) {
-                return AddItemDialog();
+                return const AddItemDialog();
               });
         },
         child: const Icon(

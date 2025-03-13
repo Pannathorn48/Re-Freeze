@@ -10,7 +10,7 @@ class Button extends StatelessWidget {
   final double height;
   final Color fontColor;
   final Color? backgroundColor;
-  final Color borderColor;
+  final Color? borderColor;
   final Color? overlayColor;
   const Button({
     super.key,
@@ -21,7 +21,7 @@ class Button extends StatelessWidget {
     required this.height,
     required this.fontColor,
     this.backgroundColor,
-    required this.borderColor,
+    this.borderColor,
     this.overlayColor,
     this.borderRadius,
   });
@@ -35,7 +35,8 @@ class Button extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   overlayColor: overlayColor,
                   backgroundColor: backgroundColor,
-                  side: BorderSide(color: borderColor, width: 0.05),
+                  side: BorderSide(
+                      color: borderColor ?? Colors.black, width: 0.05),
                   elevation: 2,
                   padding: EdgeInsets.fromLTRB(0, height / 2, 0, height / 2),
                   shadowColor: Colors.black,
@@ -54,7 +55,8 @@ class Button extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 overlayColor: overlayColor,
                 backgroundColor: backgroundColor,
-                side: BorderSide(color: borderColor, width: 0.05),
+                side:
+                    BorderSide(color: borderColor ?? Colors.black, width: 0.05),
                 elevation: 1.5,
                 padding: EdgeInsets.fromLTRB(0, height / 2, 0, height / 2),
                 shadowColor: null,
