@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mobile_project/components/custom_bottom_sheet.dart';
+import 'package:mobile_project/components/custom_bottom_sheet_input.dart';
 import 'package:mobile_project/models/item.dart';
+import 'package:mobile_project/pages/item-list/_item_add_dialog.dart';
 
 class ItemListPage extends StatefulWidget {
   final String freezeName = "ตู้เย็น 1";
@@ -240,7 +243,37 @@ class _ItemListPageState extends State<ItemListPage> {
       floatingActionButton: FloatingActionButton(
         foregroundColor: Colors.lightBlue,
         shape: const CircleBorder(),
-        onPressed: () {},
+        onPressed: () {
+          showModalBottomSheet(
+              context: context,
+              builder: (context) {
+                return ItemListBottomSheet(
+                  title: "test",
+                  titleColor: Theme.of(context).colorScheme.primary,
+                  children: [
+                    CustomBottomSheetInput(
+                      icon: Icon(
+                        Icons.edit,
+                        size: 25,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                      onPressed: () {},
+                      text: "แก้ไข",
+                      textColor: Theme.of(context).colorScheme.primary,
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    CustomBottomSheetInput(
+                        onPressed: () {},
+                        text: "ลบ",
+                        icon: const Icon(Icons.delete,
+                            size: 25, color: Colors.red),
+                        textColor: Colors.red),
+                  ],
+                );
+              });
+        },
         child: const Icon(
           Icons.add,
           color: Colors.white,
