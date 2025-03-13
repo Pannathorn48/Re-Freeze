@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:mobile_project/pages/item-list/item_list_page.dart';
-import 'package:mobile_project/pages/landing/landing.dart';
-import 'package:mobile_project/pages/login/login.dart';
-import 'package:mobile_project/pages/signup/signup.dart';
-import 'package:mobile_project/pages/signup/signup_display_name.dart';
-import 'package:mobile_project/pages/signup/signup_profile.dart';
+import 'package:mobile_project/pages/landing/landing_page.dart';
+import 'package:mobile_project/pages/login/login_page.dart';
+import 'package:mobile_project/pages/signup/signup_page.dart';
+import 'package:mobile_project/pages/signup/signup_display_name_page.dart';
+import 'package:mobile_project/pages/signup/signup_profile_page.dart';
 import 'firebase_options.dart';
 
 void main() async {
