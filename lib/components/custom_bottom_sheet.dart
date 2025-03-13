@@ -1,25 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class ItemListBottomSheet extends StatefulWidget {
+class CustomBottomSheet extends StatefulWidget {
   final String title;
   final Color titleColor;
   final List<Widget> children;
-  const ItemListBottomSheet(
+  final double? height;
+  const CustomBottomSheet(
       {super.key,
       required this.title,
       required this.titleColor,
-      required this.children});
+      required this.children,
+      this.height});
 
   @override
-  State<ItemListBottomSheet> createState() => _ItemListBottomSheetState();
+  State<CustomBottomSheet> createState() => _CustomBottomSheetState();
 }
 
-class _ItemListBottomSheetState extends State<ItemListBottomSheet> {
+class _CustomBottomSheetState extends State<CustomBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 300,
+      height: widget.height ?? 300,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         color: Colors.white,
