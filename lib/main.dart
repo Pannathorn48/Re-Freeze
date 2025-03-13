@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:mobile_project/pages/home/home.dart';
+import 'package:mobile_project/pages/item-list/item_list.dart';
 import 'package:mobile_project/pages/landing/landing.dart';
 import 'package:mobile_project/pages/login/login.dart';
 import 'package:mobile_project/pages/signup/signup.dart';
@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      initialRoute: '/signup/profile',
+      initialRoute: '/item-list',
       // FirebaseAuth.instance.currentUser == null ? '/signup' : '/home',
       routes: pagesRoutes,
     );
@@ -40,9 +40,11 @@ class MyApp extends StatelessWidget {
 
 Map<String, Widget Function(BuildContext)> pagesRoutes = {
   '/landing': (context) => const LandingPage(),
-  '/home': (context) => const HomePage(),
   '/login': (context) => const LoginPage(),
+  // sign up
   '/signup': (context) => const SignUpPage(),
   '/signup/display-name': (context) => const SetUpDisplayNamePage(),
   '/signup/profile': (context) => const SignupProfilePage(),
+  // item list
+  '/item-list': (context) => const ItemListPage(),
 };
