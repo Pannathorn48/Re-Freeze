@@ -33,6 +33,7 @@ class _ItemListPageState extends State<ItemListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 236, 236, 236),
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
@@ -81,6 +82,8 @@ class _ItemListPageState extends State<ItemListPage> {
                         });
                       },
                       decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Colors.white,
                           hintText: "ค้นหา",
                           prefixIcon: const Icon(Icons.search),
                           border: OutlineInputBorder(
@@ -106,7 +109,6 @@ class _ItemListPageState extends State<ItemListPage> {
               itemCount: items.length,
               itemBuilder: (BuildContext context, int index) {
                 return Card(
-                  color: Colors.grey[100],
                   child: SizedBox(
                     width: double.infinity,
                     height: 170,
