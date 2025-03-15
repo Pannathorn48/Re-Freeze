@@ -10,7 +10,7 @@ class BottomNavBar extends StatefulWidget {
 
 class _BottomNavBarState extends State<BottomNavBar> {
   int _selectedIndex = 0;
-  List widgetOptions = <Widget>[
+  List widgetOptions = const <Widget>[
     Text("Home"),
     Text("About"),
     Text("Setting"),
@@ -21,12 +21,14 @@ class _BottomNavBarState extends State<BottomNavBar> {
     return Scaffold(
       body: Center(child: widgetOptions.elementAt(_selectedIndex)),
       bottomNavigationBar: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
           currentIndex: _selectedIndex,
           onTap: (value) => setState(() => _selectedIndex = value),
-          items: [
+          items: const [
             BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
             BottomNavigationBarItem(
                 icon: Icon(FontAwesome5.snowflake), label: "Freeze"),
+            BottomNavigationBarItem(icon: Icon(Icons.group), label: "Group"),
             BottomNavigationBarItem(
                 icon: Icon(Icons.settings), label: "Setting"),
           ]),
