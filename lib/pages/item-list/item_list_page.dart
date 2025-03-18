@@ -101,7 +101,11 @@ class _ItemListPageState extends State<ItemListPage> {
                     width: 10,
                   ),
                   IconButton(
-                      onPressed: () {}, icon: const Icon(Icons.filter_list))
+                      onPressed: () {},
+                      icon: Icon(
+                        Icons.filter_alt_outlined,
+                        color: Theme.of(context).colorScheme.primary,
+                      ))
                 ],
               ),
             ),
