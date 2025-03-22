@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mobile_project/pages/home/_notification_card.dart';
+import 'package:mobile_project/pages/home/notification_card.dart';
 import 'package:mobile_project/services/fonts.dart';
 
 class NotificationWidget extends StatefulWidget {

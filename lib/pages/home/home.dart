@@ -2,8 +2,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mobile_project/pages/home/_favorite_refrigerator.dart';
-import 'package:mobile_project/pages/home/_notification.dart';
+import 'package:mobile_project/pages/home/favorite_refrigerator.dart';
+import 'package:mobile_project/pages/home/notification.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

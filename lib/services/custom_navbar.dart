@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:mobile_project/pages/home/home.dart';
 
 class BottomNavBar extends StatefulWidget {
