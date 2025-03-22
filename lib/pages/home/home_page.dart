@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mobile_project/components/refresh.dart';
+import 'package:mobile_project/components/search_text_input.dart';
 import 'package:mobile_project/pages/home/favorite_refrigerator.dart';
 import 'package:mobile_project/pages/home/notification.dart';
 import 'package:mobile_project/services/providers.dart';
@@ -37,8 +37,14 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: RefreshWidget(
-        onRefresh: _refreshData,
+        body: RefreshIndicator(
+      onRefresh: _refreshData,
+      color: Theme.of(context).colorScheme.primary,
+      backgroundColor: Colors.white,
+      displacement: 60,
+      strokeWidth: 3,
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
         child: Column(children: [
           SizedBox(
             height: 400,
@@ -98,29 +104,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       child: Column(
                         children: [
-                          TextField(
-                            controller: searchController,
-                            style: GoogleFonts.notoSansThai(),
-                            onChanged: (value) {
-                              setState(() {
-                                searchText = value;
-                              });
-                            },
-                            decoration: InputDecoration(
-                              filled: true,
-                              fillColor: Colors.white,
-                              hintText: "ค้นหา",
-                              prefixIcon: const Icon(Icons.search),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(50),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(50),
-                                borderSide:
-                                    BorderSide(color: Colors.blue[100]!),
-                              ),
-                            ),
-                          ),
+                          SearchTextInput(controller: searchController),
                           const SizedBox(height: 30),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -154,7 +138,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           Padding(
-              padding: const EdgeInsets.fromLTRB(25, 0, 25, 0),
+              padding: const EdgeInsets.only(right: 25, left: 25),
               child: Column(
                 children: [
                   FavoriteRefrigeratorWidget(
@@ -166,7 +150,7 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(height: 50),
         ]),
       ),
-    );
+    ));
   }
 
   Widget _buildCategoryIcon({
@@ -175,7 +159,7 @@ class _HomePageState extends State<HomePage> {
     required VoidCallback onPressed,
   }) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(7, 0, 7, 0),
+      padding: const EdgeInsets.only(right: 7, left: 7),
       child: Column(
         children: [
           IconButton(

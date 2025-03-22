@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class FavoriteRefrigeratorCard extends StatelessWidget {
   final Image refrigeratorImage;
@@ -31,10 +32,10 @@ class FavoriteRefrigeratorCard extends StatelessWidget {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                  padding: const EdgeInsets.all(10),
                   child: Text(
                     refrigeratorName,
-                    style: const TextStyle(fontSize: 15),
+                    style: GoogleFonts.notoSansThai(fontSize: 15),
                   ),
                 ),
               ],

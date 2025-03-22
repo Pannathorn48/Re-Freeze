@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:mobile_project/pages/home/home_page.dart';
+import 'package:mobile_project/pages/refrigerators/refrigerators_page.dart';
 
 class BottomNavBar extends StatefulWidget {
   const BottomNavBar({
@@ -15,7 +16,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
   int _selectedIndex = 0;
   List widgetOptions = <Widget>[
     const HomePage(),
-    Text("About"),
+    const RefrigeratorsPage(),
     Text("Setting"),
     Text("Setting")
   ];
