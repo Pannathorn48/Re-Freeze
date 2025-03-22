@@ -7,6 +7,8 @@ import 'package:mobile_project/pages/signup/signup_page.dart';
 import 'package:mobile_project/pages/signup/signup_display_name_page.dart';
 import 'package:mobile_project/pages/signup/signup_profile_page.dart';
 import 'package:mobile_project/services/custom_navbar.dart';
+import 'package:mobile_project/services/providers.dart';
+import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -15,14 +17,22 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const MyApp());
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(create: (context) => LoadingProvider())
+  ], child: const MyApp()));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
   Widget build(BuildContext context) {
+    final isLoadingProvider = Provider.of<LoadingProvider>(context);
     return MaterialApp(
       title: 'Refreeze',
       theme: ThemeData(
@@ -32,7 +42,15 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const BottomNavBar(),
+      home: Stack(
+        children: [
+          const BottomNavBar(),
+          if (isLoadingProvider.isLoading)
+            Container(
+              color: Colors.black.withValues(alpha: 0.1),
+            ),
+        ],
+      ),
       // initialRoute: '/item-list',
       // FirebaseAuth.instance.currentUser == null ? '/signup' : '/home',
       routes: pagesRoutes,

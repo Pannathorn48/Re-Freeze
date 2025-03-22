@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:mobile_project/pages/home/home.dart';
+import 'package:mobile_project/pages/home/home_page.dart';
 
 class BottomNavBar extends StatefulWidget {
-  const BottomNavBar({super.key});
+  const BottomNavBar({
+    super.key,
+  });
 
   @override
   State<BottomNavBar> createState() => _BottomNavBarState();
