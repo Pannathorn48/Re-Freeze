@@ -18,15 +18,9 @@ class _RefrigeratorsPageState extends State<RefrigeratorsPage> {
       backgroundColor: const Color.fromARGB(255, 236, 236, 236),
       appBar: AppBar(
         centerTitle: true,
-        leading: IconButton(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.arrow_back_ios_sharp,
-              color: Colors.white,
-            )),
         title: Padding(
           padding: const EdgeInsets.only(bottom: 20, top: 20),
-          child: Text("Refrigerators",
+          child: Text("ตู้เย็นทั้งหมด",
               style: GoogleFonts.notoSansThai(
                   fontSize: 20,
                   color: Colors.white,
