@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mobile_project/pages/home/_notification_card.dart';
 import 'package:mobile_project/services/fonts.dart';
 
 class NotificationWidget extends StatefulWidget {
@@ -22,17 +23,19 @@ class _NotificationWidgetState extends State<NotificationWidget> {
           color: CustomColors.grey,
         ),
         const SizedBox(height: 10),
-        Card(
-            elevation: 5,
-            child: Container(
-              height: 100,
-            )),
+        NotificationCard(
+          onTap: () {},
+          icon: Icons.error_rounded,
+          backgroundColor: const Color.fromARGB(255, 249, 242, 243),
+          primaryColor: Colors.redAccent,
+        ),
         const SizedBox(height: 10),
-        Card(
-            elevation: 5,
-            child: Container(
-              height: 100,
-            )),
+        NotificationCard(
+          onTap: () {},
+          icon: Icons.warning_rounded,
+          backgroundColor: const Color.fromARGB(255, 252, 246, 236),
+          primaryColor: Colors.amber,
+        )
       ],
     );
   }
