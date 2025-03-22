@@ -31,6 +31,7 @@ class Item {
 }
 
 class Tag {
+  final String uuid = "12345";
   String name;
   Color color;
   Tag({required this.name, required this.color});

@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_project/components/button.dart';
 import 'package:mobile_project/components/icon_dialog.dart';
 import 'package:mobile_project/components/input_feild.dart';
-import 'package:mobile_project/controller/user_controller.dart';
+import 'package:mobile_project/api/user_controller.dart';
 import 'package:mobile_project/models/user.dart';
 import 'package:mobile_project/services/login_service.dart';
 import 'package:mobile_project/services/validator_service.dart';

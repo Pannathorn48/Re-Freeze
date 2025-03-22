@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mobile_project/pages/home/favorite_refrigerator_card.dart';
 import 'package:mobile_project/services/fonts.dart';
 
 class FavoriteRefrigeratorWidget extends StatelessWidget {
@@ -31,18 +32,11 @@ class FavoriteRefrigeratorWidget extends StatelessWidget {
             itemCount: 4,
             scrollDirection: Axis.horizontal,
             itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
-                child: Card(
-                  elevation: 5,
-                  clipBehavior: Clip.hardEdge,
-                  child: InkWell(
-                    onTap: () {},
-                    child: Container(
-                      width: 150,
-                    ),
-                  ),
-                ),
+              return FavoriteRefrigeratorCard(
+                refrigeratorImage:
+                    Image.asset("assets/images/no-image.png"),
+                refrigeratorName: "Refrigerator $index",
+                onTap: () {},
               );
             },
           ),

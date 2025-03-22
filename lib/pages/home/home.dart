@@ -21,29 +21,28 @@ class _HomePageState extends State<HomePage> {
 
   // Method to simulate data loading
   Future<void> _refreshData() async {
-    // Set loading state to true to show the loading indicator
     setState(() {
       _isLoading = true;
     });
 
-    // Simulate network delay
     await Future.delayed(const Duration(seconds: 2));
 
-    // Here you would typically fetch new data from your API
-    // For example: await fetchFavoriteRefrigerators();
-    // await fetchNotifications();
-
-    // Set loading state to false when done
     setState(() {
       _isLoading = false;
     });
   }
 
   @override
+  void dispose() {
+    searchController.dispose();
+    _favoriteScrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: RefreshIndicator(
-        // Add RefreshIndicator widget as the parent of SingleChildScrollView
         onRefresh: _refreshData,
         color: Theme.of(context).colorScheme.primary,
         backgroundColor: Colors.white,
@@ -90,7 +89,6 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
 
-                      // Search and category container
                       Positioned(
                         top: 150,
                         left: 0,
@@ -184,7 +182,6 @@ class _HomePageState extends State<HomePage> {
                 const SizedBox(height: 50),
               ]),
             ),
-
             if (_isLoading)
               Container(
                 color: Colors.black.withValues(alpha: 0.1),
