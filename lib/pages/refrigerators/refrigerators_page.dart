@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_project/components/search_text_input.dart';
+import 'package:mobile_project/pages/refrigerators/add_refrigerator_dialog.dart';
 import 'package:mobile_project/pages/refrigerators/refrigerator_card.dart';
 
 class RefrigeratorsPage extends StatefulWidget {
@@ -29,7 +30,11 @@ class _RefrigeratorsPageState extends State<RefrigeratorsPage> {
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          showDialog(
+              context: context,
+              builder: (context) => const AddRefrigeratorDialog());
+        },
         shape: const CircleBorder(),
         backgroundColor: Theme.of(context).colorScheme.primary,
         child: const Padding(

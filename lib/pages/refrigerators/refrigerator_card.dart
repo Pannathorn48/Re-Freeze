@@ -52,6 +52,9 @@ class RefrigeratorCard extends StatelessWidget {
                                         textColor: Theme.of(context)
                                             .colorScheme
                                             .primary),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
                                     CustomBottomSheetInput(
                                       onPressed: () {},
                                       text: "ลบ",
