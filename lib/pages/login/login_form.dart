@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_project/components/button.dart';
 import 'package:mobile_project/components/icon_dialog.dart';
 import 'package:mobile_project/components/input_feild.dart';
+import 'package:mobile_project/services/custom_theme.dart';
 import 'package:mobile_project/services/login_service.dart';
 import 'package:mobile_project/services/validator_service.dart';
 
@@ -86,11 +87,11 @@ class _LoginFormState extends State<LoginForm> {
                             builder: (context) => const IconDialog(
                                 icon: Icon(Icons.error),
                                 title: "Invalid Credential",
-                                titleColor: Colors.redAccent,
+                                titleColor: CustomColors.error,
                                 content:
                                     "Your email or password is incorrect , please try again",
                                 actionText: "Try again",
-                                actionColor: Colors.redAccent));
+                                actionColor: CustomColors.error));
                         break;
                       case 'network-request-failed':
                         showDialog(
@@ -98,11 +99,11 @@ class _LoginFormState extends State<LoginForm> {
                             builder: (context) => const IconDialog(
                                 icon: Icon(Icons.error),
                                 title: "Network Error",
-                                titleColor: Colors.redAccent,
+                                titleColor: CustomColors.error,
                                 content:
                                     "It seem to be a problem with network , please try again later",
                                 actionText: "Try again",
-                                actionColor: Colors.redAccent));
+                                actionColor: CustomColors.error));
                         break;
                     }
                   }
@@ -136,10 +137,10 @@ class _LoginFormState extends State<LoginForm> {
                       builder: (context) => const IconDialog(
                             icon: Icon(Icons.error),
                             title: "Failed to sign up",
-                            titleColor: Colors.redAccent,
+                            titleColor: CustomColors.error,
                             content: "something went wrong , please try again",
                             actionText: "Try again",
-                            actionColor: Colors.redAccent,
+                            actionColor: CustomColors.error,
                           ));
                 }
               },

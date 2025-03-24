@@ -19,7 +19,9 @@ class FavoriteRefrigeratorCard extends StatelessWidget {
         elevation: 5,
         clipBehavior: Clip.hardEdge,
         child: InkWell(
-          onTap: () {},
+          onTap: () {
+            Navigator.pushNamed(context, "/item-list");
+          },
           child: Ink(
             width: 150,
             child: Column(

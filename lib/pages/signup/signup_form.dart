@@ -7,6 +7,7 @@ import 'package:mobile_project/components/icon_dialog.dart';
 import 'package:mobile_project/components/input_feild.dart';
 import 'package:mobile_project/api/user_controller.dart';
 import 'package:mobile_project/models/user.dart';
+import 'package:mobile_project/services/custom_theme.dart';
 import 'package:mobile_project/services/login_service.dart';
 import 'package:mobile_project/services/validator_service.dart';
 
@@ -112,10 +113,10 @@ class _SignUpFormState extends State<SignUpForm> {
                         builder: (context) => IconDialog(
                               icon: const Icon(Icons.error),
                               title: "Failed to sign up",
-                              titleColor: Colors.redAccent,
+                              titleColor: CustomColors.error,
                               content: error.message!,
                               actionText: "Try again",
-                              actionColor: Colors.redAccent,
+                              actionColor: CustomColors.error,
                             ));
                   }
                 }
@@ -148,10 +149,10 @@ class _SignUpFormState extends State<SignUpForm> {
                       builder: (context) => const IconDialog(
                             icon: Icon(Icons.error),
                             title: "Failed to sign up",
-                            titleColor: Colors.redAccent,
+                            titleColor: CustomColors.error,
                             content: "something went wrong , please try again",
                             actionText: "Try again",
-                            actionColor: Colors.redAccent,
+                            actionColor: CustomColors.error,
                           ));
                 }
               },

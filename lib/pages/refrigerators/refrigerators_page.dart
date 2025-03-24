@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mobile_project/components/custom_float_button.dart';
 import 'package:mobile_project/components/search_text_input.dart';
 import 'package:mobile_project/pages/refrigerators/add_refrigerator_dialog.dart';
 import 'package:mobile_project/pages/refrigerators/refrigerator_card.dart';
+import 'package:mobile_project/services/custom_theme.dart';
 
 class RefrigeratorsPage extends StatefulWidget {
   const RefrigeratorsPage({super.key});
@@ -16,7 +18,7 @@ class _RefrigeratorsPageState extends State<RefrigeratorsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 236, 236, 236),
+      backgroundColor: CustomColors.greyBackground,
       appBar: AppBar(
         centerTitle: true,
         title: Padding(
@@ -29,22 +31,11 @@ class _RefrigeratorsPageState extends State<RefrigeratorsPage> {
         ),
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showDialog(
-              context: context,
-              builder: (context) => const AddRefrigeratorDialog());
-        },
-        shape: const CircleBorder(),
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        child: const Padding(
-          padding: EdgeInsets.all(10.0),
-          child: Icon(
-            Icons.add,
-            color: Colors.white,
-          ),
-        ),
-      ),
+      floatingActionButton: CustomFloatButton(onPressed: () {
+        showDialog(
+            context: context,
+            builder: (context) => const AddRefrigeratorDialog());
+      }),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,

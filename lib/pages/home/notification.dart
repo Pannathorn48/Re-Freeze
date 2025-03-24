@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_project/pages/home/notification_card.dart';
-import 'package:mobile_project/services/fonts.dart';
+import 'package:mobile_project/services/custom_theme.dart';
 
 class NotificationWidget extends StatefulWidget {
   const NotificationWidget({super.key});
@@ -26,15 +26,15 @@ class _NotificationWidgetState extends State<NotificationWidget> {
         NotificationCard(
           onTap: () {},
           icon: Icons.error_rounded,
-          backgroundColor: const Color.fromARGB(255, 249, 242, 243),
-          primaryColor: Colors.redAccent,
+          backgroundColor: CustomColors.errorBackground,
+          primaryColor: CustomColors.error,
         ),
         const SizedBox(height: 10),
         NotificationCard(
           onTap: () {},
           icon: Icons.warning_rounded,
-          backgroundColor: const Color.fromARGB(255, 252, 246, 236),
-          primaryColor: Colors.amber,
+          backgroundColor: CustomColors.warningBackground,
+          primaryColor: CustomColors.warning,
         )
       ],
     );

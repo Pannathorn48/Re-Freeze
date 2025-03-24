@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:mobile_project/pages/group/group_page.dart';
 import 'package:mobile_project/pages/home/home_page.dart';
 import 'package:mobile_project/pages/refrigerators/refrigerators_page.dart';
+import 'package:mobile_project/services/custom_theme.dart';
 
 class BottomNavBar extends StatefulWidget {
   const BottomNavBar({
@@ -17,13 +19,13 @@ class _BottomNavBarState extends State<BottomNavBar> {
   List widgetOptions = <Widget>[
     const HomePage(),
     const RefrigeratorsPage(),
-    Text("Setting"),
+    const GroupPage(),
     Text("Setting")
   ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 236, 236, 236),
+      backgroundColor: CustomColors.greyBackground,
       body: widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,

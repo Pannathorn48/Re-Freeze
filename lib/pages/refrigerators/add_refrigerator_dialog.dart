@@ -173,7 +173,7 @@ class _AddRefrigeratorDialogState extends State<AddRefrigeratorDialog> {
                     height: 30,
                     fontColor: Colors.white,
                     overlayColor: Colors.white,
-                    backgroundColor: Colors.red),
+                    backgroundColor: Colors.redAccent),
                 Button(
                     onPressed: () {},
                     text: "ตกลง",

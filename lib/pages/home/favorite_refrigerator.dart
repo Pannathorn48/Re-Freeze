@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_project/pages/home/favorite_refrigerator_card.dart';
-import 'package:mobile_project/services/fonts.dart';
+import 'package:mobile_project/services/custom_theme.dart';
 
 class FavoriteRefrigeratorWidget extends StatelessWidget {
   const FavoriteRefrigeratorWidget({

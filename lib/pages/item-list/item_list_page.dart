@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mobile_project/components/custom_float_button.dart';
 import 'package:mobile_project/models/item.dart';
 import 'package:mobile_project/pages/item-list/item_add_dialog.dart';
 import 'package:mobile_project/pages/item-list/item_edit_bottom_sheet.dart';
+import 'package:mobile_project/services/custom_theme.dart';
 
 class ItemListPage extends StatefulWidget {
   final String freezeName = "ตู้เย็น 1";
@@ -35,236 +37,228 @@ class _ItemListPageState extends State<ItemListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 236, 236, 236),
-      appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-        leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: const Icon(
-              Icons.arrow_back_ios,
-              color: Colors.white,
-            )),
-        title: Text(
-          widget.freezeName,
-          style: GoogleFonts.notoSansThai(
-              color: Colors.white, fontWeight: FontWeight.bold, fontSize: 25),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(
-              Icons.notifications,
-              color: Colors.white,
-            ),
-            onPressed: () {},
-          ),
-          IconButton(
-              onPressed: () {},
+        backgroundColor: CustomColors.greyBackground,
+        appBar: AppBar(
+          centerTitle: true,
+          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+          leading: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
               icon: const Icon(
-                Icons.info_outline,
+                Icons.arrow_back_ios,
                 color: Colors.white,
-              ))
-        ],
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(10),
-            child: SizedBox(
-              width: double.infinity,
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: searchController,
-                      style: GoogleFonts.notoSansThai(),
-                      onChanged: (value) {
-                        setState(() {
-                          searchText = value;
-                        });
-                      },
-                      decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.white,
-                          hintText: "ค้นหา",
-                          prefixIcon: const Icon(Icons.search),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            borderSide: BorderSide(color: Colors.blue[100]!),
-                          )),
+              )),
+          title: Text(
+            widget.freezeName,
+            style: GoogleFonts.notoSansThai(
+                color: Colors.white, fontWeight: FontWeight.bold, fontSize: 25),
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(
+                Icons.notifications,
+                color: Colors.white,
+              ),
+              onPressed: () {},
+            ),
+            IconButton(
+                onPressed: () {},
+                icon: const Icon(
+                  Icons.info_outline,
+                  color: Colors.white,
+                ))
+          ],
+        ),
+        body: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: SizedBox(
+                width: double.infinity,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: searchController,
+                        style: GoogleFonts.notoSansThai(),
+                        onChanged: (value) {
+                          setState(() {
+                            searchText = value;
+                          });
+                        },
+                        decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.white,
+                            hintText: "ค้นหา",
+                            prefixIcon: const Icon(Icons.search),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20),
+                              borderSide: BorderSide(color: Colors.blue[100]!),
+                            )),
+                      ),
                     ),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  IconButton(
-                      onPressed: () {},
-                      icon: Icon(
-                        Icons.filter_alt_outlined,
-                        color: Theme.of(context).colorScheme.primary,
-                      ))
-                ],
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    IconButton(
+                        onPressed: () {},
+                        icon: Icon(
+                          Icons.filter_alt_outlined,
+                          color: Theme.of(context).colorScheme.primary,
+                        ))
+                  ],
+                ),
               ),
             ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: items.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Card(
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: 170,
-                    child: Row(
-                      children: [
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Image.asset(
-                          'assets/images/no-image.png',
-                          width: 130,
-                          height: 130,
-                        ),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        Expanded(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              RichText(
-                                text: TextSpan(
-                                  children: [
-                                    TextSpan(
-                                      text: "ชื่อ: ",
-                                      style: GoogleFonts.notoSansThai(
-                                        fontSize: 20,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                    TextSpan(
-                                      text: items[index].name,
-                                      style: GoogleFonts.notoSansThai(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              RichText(
-                                text: TextSpan(
-                                  children: [
-                                    TextSpan(
-                                      text: "จำนวน ",
-                                      style: GoogleFonts.notoSansThai(
-                                        fontSize: 15,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                    TextSpan(
-                                      text:
-                                          "${items[index].quantity} ${items[index].unit}",
-                                      style: GoogleFonts.notoSansThai(
-                                        fontSize: 15,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              RichText(
-                                text: TextSpan(
-                                  children: [
-                                    TextSpan(
-                                      text: "วันหมดอายุ ",
-                                      style: GoogleFonts.notoSansThai(
-                                        fontSize: 15,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                    TextSpan(
-                                      text: items[index].expiryDateString,
-                                      style: GoogleFonts.notoSansThai(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.redAccent,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(
-                                height: 30,
-                                child: ListView(
-                                  scrollDirection: Axis.horizontal,
-                                  children: items[index]
-                                      .tags
-                                      .map((tag) => Chip(
-                                            side: BorderSide(
-                                                color: tag.color, width: 1),
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(20)),
-                                            backgroundColor: tag.color,
-                                            label: Text(
-                                              tag.name,
-                                              style: GoogleFonts.notoSansThai(
-                                                  color: Colors.white,
-                                                  fontSize: 10),
-                                            ),
-                                          ))
-                                      .toList(),
-                                ),
-                              ),
-                            ],
+            Expanded(
+              child: ListView.builder(
+                itemCount: items.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Card(
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 170,
+                      child: Row(
+                        children: [
+                          const SizedBox(
+                            width: 10,
                           ),
-                        ),
-                        Align(
-                          alignment: Alignment.topRight,
-                          child: IconButton(
-                            icon: const Icon(Icons.more_horiz_outlined),
-                            onPressed: () {
-                              showModalBottomSheet(
-                                  context: context,
-                                  builder: (context) {
-                                    return EditBottomSheet(
-                                        title: items[index].name);
-                                  });
-                            },
+                          Image.asset(
+                            'assets/images/no-image.png',
+                            width: 130,
+                            height: 130,
                           ),
-                        ),
-                      ],
+                          const SizedBox(
+                            width: 20,
+                          ),
+                          Expanded(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                RichText(
+                                  text: TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: "ชื่อ: ",
+                                        style: GoogleFonts.notoSansThai(
+                                          fontSize: 20,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                      TextSpan(
+                                        text: items[index].name,
+                                        style: GoogleFonts.notoSansThai(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                RichText(
+                                  text: TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: "จำนวน ",
+                                        style: GoogleFonts.notoSansThai(
+                                          fontSize: 15,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                      TextSpan(
+                                        text:
+                                            "${items[index].quantity} ${items[index].unit}",
+                                        style: GoogleFonts.notoSansThai(
+                                          fontSize: 15,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                RichText(
+                                  text: TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: "วันหมดอายุ ",
+                                        style: GoogleFonts.notoSansThai(
+                                          fontSize: 15,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                      TextSpan(
+                                        text: items[index].expiryDateString,
+                                        style: GoogleFonts.notoSansThai(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.redAccent,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 30,
+                                  child: ListView(
+                                    scrollDirection: Axis.horizontal,
+                                    children: items[index]
+                                        .tags
+                                        .map((tag) => Chip(
+                                              side: BorderSide(
+                                                  color: tag.color, width: 1),
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          20)),
+                                              backgroundColor: tag.color,
+                                              label: Text(
+                                                tag.name,
+                                                style: GoogleFonts.notoSansThai(
+                                                    color: Colors.white,
+                                                    fontSize: 10),
+                                              ),
+                                            ))
+                                        .toList(),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Align(
+                            alignment: Alignment.topRight,
+                            child: IconButton(
+                              icon: const Icon(Icons.more_horiz_outlined),
+                              onPressed: () {
+                                showModalBottomSheet(
+                                    context: context,
+                                    builder: (context) {
+                                      return EditBottomSheet(
+                                          title: items[index].name);
+                                    });
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
-          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        foregroundColor: Colors.lightBlue,
-        shape: const CircleBorder(),
-        onPressed: () {
+          ],
+        ),
+        floatingActionButton: CustomFloatButton(onPressed: () {
           showDialog(
               context: context,
               builder: (context) {
                 return const AddItemDialog();
               });
-        },
-        child: const Icon(
-          Icons.add,
-          color: Colors.white,
-        ),
-      ),
-    );
+        }));
   }
 }
