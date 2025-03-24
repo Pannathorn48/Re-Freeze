@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_project/components/button.dart';
 import 'package:mobile_project/components/input_field_rounded.dart';
 import 'package:mobile_project/models/item.dart';
+import 'package:mobile_project/pages/item-list/date_picker.dart';
 import 'package:mobile_project/pages/item-list/tag_selector.dart';
 
 class AddItemDialog extends StatefulWidget {
@@ -195,8 +196,7 @@ class _AddItemDialogState extends State<AddItemDialog> {
                         ),
                         const SizedBox(height: 20),
                         Center(
-                          child: _getDatePicker(
-                              context: context,
+                          child: DatePickerWidget(
                               date: _expireDate,
                               label: "วันหมดอายุ :",
                               color: Colors.red,
@@ -206,8 +206,7 @@ class _AddItemDialogState extends State<AddItemDialog> {
                         ),
                         const SizedBox(height: 10),
                         Center(
-                          child: _getDatePicker(
-                              context: context,
+                          child: DatePickerWidget(
                               date: _warnDate,
                               label: "วันแจ้งเตือน :",
                               color: Colors.orange,
@@ -312,41 +311,5 @@ class _AddItemDialogState extends State<AddItemDialog> {
         ),
       ),
     );
-  }
-
-  Widget _getDatePicker(
-      {required BuildContext context,
-      required DateTime? date,
-      required String label,
-      required Color color,
-      required VoidCallback onPressed}) {
-    String day = date?.day.toString() ?? '--';
-    String month = date?.month.toString() ?? '--';
-    String year = date?.year.toString() ?? '----';
-    return SizedBox(
-        width: double.infinity,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(10, 2, 10, 2),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(label, style: GoogleFonts.notoSansThai(fontSize: 17)),
-              const SizedBox(width: 20),
-              ElevatedButton(
-                  onPressed: onPressed,
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.calendar_today,
-                        color: color,
-                      ),
-                      const SizedBox(width: 10),
-                      Text("$day/$month/$year",
-                          style: GoogleFonts.notoSansThai(color: color)),
-                    ],
-                  )),
-            ],
-          ),
-        ));
   }
 }
