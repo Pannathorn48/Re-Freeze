@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_project/components/button.dart';
 import 'package:mobile_project/components/input_field_rounded.dart';
 import 'package:mobile_project/models/item.dart';
+import 'package:mobile_project/pages/item-list/tag_selector.dart';
 
 class AddItemDialog extends StatefulWidget {
   const AddItemDialog({super.key});
@@ -21,6 +22,7 @@ class _AddItemDialogState extends State<AddItemDialog> {
   final nameTextController = TextEditingController();
   final quantityTextController = TextEditingController();
   final unitTextController = TextEditingController();
+  final selectorController = TextEditingController();
   final List<Tag> tags = [];
   DateTime? _expireDate = DateTime.now();
   DateTime? _warnDate = DateTime.now();
@@ -80,54 +82,6 @@ class _AddItemDialogState extends State<AddItemDialog> {
             centerText: true,
           )
         ],
-      ),
-    );
-  }
-
-  Widget _openTageSelector({required BuildContext context}) {
-    return SizedBox(
-      width: double.infinity,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(10, 2, 10, 2),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text("เลือก tags :", style: GoogleFonts.notoSansThai(fontSize: 17)),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
-              child: Container(
-                padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
-                width: 100,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                      color: Theme.of(context).colorScheme.primary, width: 1),
-                ),
-                child: DropdownButton<Tag>(
-                    elevation: 0,
-                    borderRadius: BorderRadius.circular(10),
-                    value: dropDownValue,
-                    items: list.map((Tag tag) {
-                      return DropdownMenuItem<Tag>(
-                        value: tag,
-                        child: Text(tag.name),
-                      );
-                    }).toList(),
-                    style: GoogleFonts.notoSansThai(
-                        fontSize: 17,
-                        color: Theme.of(context).colorScheme.primary),
-                    onChanged: (Tag? newValue) {
-                      if (newValue != null && !tags.contains(newValue)) {
-                        tags.add(newValue);
-                      }
-                      setState(() {
-                        dropDownValue = newValue;
-                      });
-                    }),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -262,7 +216,19 @@ class _AddItemDialogState extends State<AddItemDialog> {
                               }),
                         ),
                         const SizedBox(height: 10),
-                        Center(child: _openTageSelector(context: context)),
+                        Center(
+                            child: TagSelector(
+                          tagList: list,
+                          controller: selectorController,
+                          onSelected: (Tag? newValue) {
+                            if (newValue != null && !tags.contains(newValue)) {
+                              tags.add(newValue);
+                            }
+                            setState(() {
+                              dropDownValue = newValue;
+                            });
+                          },
+                        )),
                         const SizedBox(height: 10),
                         SizedBox(
                           height: 50,

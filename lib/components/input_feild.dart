@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 class InputFeild extends StatelessWidget {
   final String label;
-  final String hintText;
+  final String? hintText;
   final String? Function(String?)? validator;
   final bool? obscureText;
   final TextInputType? keyboardType;
@@ -13,13 +13,11 @@ class InputFeild extends StatelessWidget {
       {super.key,
       required this.label,
       this.validator,
-      required this.hintText,
+      this.hintText,
       this.obscureText,
       this.keyboardType,
       this.suffixIcon,
-      required this.controller}
-    );
-  
+      required this.controller});
 
   @override
   Widget build(BuildContext context) {
