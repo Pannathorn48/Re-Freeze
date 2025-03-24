@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:mobile_project/models/dropdownable.dart';
+
 class Item {
   String name;
   int quantity;
@@ -25,16 +27,15 @@ class Item {
       expiryDate: DateTime.parse(json['expiryDate']),
       imageUrl: json['imageUrl'],
       unit: json['unit'],
-      tags: (json['tags'] as List).map((tag) => Tag.fromJson(tag)).toList(),
+      tags: (json['tags'] as List?)?.map((tag) => Tag.fromJson(tag)).toList() ??
+          <Tag>[],
     );
   }
 }
 
-class Tag {
+class Tag extends Dropdownable {
   final String uuid = "12345";
-  String name;
-  Color color;
-  Tag({required this.name, required this.color});
+  Tag({required super.name, required super.color});
 
   factory Tag.fromJson(Map<String, dynamic> json) {
     return Tag(

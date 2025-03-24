@@ -42,16 +42,16 @@ class _MyAppState extends State<MyApp> {
         ).copyWith(outline: Colors.lightBlue),
         useMaterial3: true,
       ),
-      // home: Stack(
-      //   children: [
-      //     const BottomNavBar(),
-      //     if (isLoadingProvider.isLoading)
-      //       Container(
-      //         color: Colors.black.withValues(alpha: 0.1),
-      //       ),
-      //   ],
-      // ),
-      initialRoute: '/item-list',
+      home: Stack(
+        children: [
+          const BottomNavBar(),
+          if (isLoadingProvider.isLoading)
+            Container(
+              color: Colors.black.withValues(alpha: 0.1),
+            ),
+        ],
+      ),
+      // initialRoute: '/item-list',
       // FirebaseAuth.instance.currentUser == null ? '/signup' : '/home',
       routes: pagesRoutes,
     );

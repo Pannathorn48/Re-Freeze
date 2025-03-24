@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_project/components/button.dart';
 import 'package:mobile_project/components/input_field_rounded.dart';
+import 'package:mobile_project/models/dropdownable.dart';
 import 'package:mobile_project/models/item.dart';
 import 'package:mobile_project/pages/item-list/date_picker.dart';
 import 'package:mobile_project/pages/item-list/tag_selector.dart';
@@ -219,12 +220,13 @@ class _AddItemDialogState extends State<AddItemDialog> {
                             child: TagSelector(
                           tagList: list,
                           controller: selectorController,
-                          onSelected: (Tag? newValue) {
+                          onSelected: (Dropdownable? newValue) {
+                            newValue = (newValue) as Tag?;
                             if (newValue != null && !tags.contains(newValue)) {
                               tags.add(newValue);
                             }
                             setState(() {
-                              dropDownValue = newValue;
+                              dropDownValue = newValue as Tag?;
                             });
                           },
                         )),

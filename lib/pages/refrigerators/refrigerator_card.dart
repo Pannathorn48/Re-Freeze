@@ -10,7 +10,9 @@ class RefrigeratorCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: InkWell(
-        onTap: () {},
+        onTap: () {
+          Navigator.pushNamed(context, "/item-list");
+        },
         child: Padding(
           padding: const EdgeInsets.all(8),
           child: Column(

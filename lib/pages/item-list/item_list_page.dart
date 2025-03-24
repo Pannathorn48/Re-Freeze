@@ -40,7 +40,9 @@ class _ItemListPageState extends State<ItemListPage> {
         centerTitle: true,
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         leading: IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pop(context);
+            },
             icon: const Icon(
               Icons.arrow_back_ios,
               color: Colors.white,
