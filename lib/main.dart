@@ -42,7 +42,11 @@ class _MyAppState extends State<MyApp> {
         colorScheme: ColorScheme.fromSwatch(
           primarySwatch: themeColor,
           accentColor: Colors.blueAccent,
-        ).copyWith(outline: themeColor, primaryContainer: themeColor[100]),
+        ).copyWith(
+          secondary: themeColor[800],
+          outline: themeColor,
+          primaryContainer: themeColor[100],
+        ),
         useMaterial3: true,
       ),
       home: Stack(
@@ -70,5 +74,6 @@ Map<String, Widget Function(BuildContext)> pagesRoutes = {
   '/signup/profile': (context) => const SignupProfilePage(),
   // item list
   '/item-list': (context) => const ItemListPage(),
+  //refrigerators
   '/refrigerators': (context) => const RefrigeratorsPage()
 };

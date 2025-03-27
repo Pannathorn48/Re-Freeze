@@ -111,20 +111,35 @@ class _HomePageState extends State<HomePage> {
                             children: [
                               _buildCategoryIcon(
                                   icon: SvgPicture.asset(
-                                      'assets/icons/Refrigerator.svg',
-                                      width: 30),
+                                    'assets/icons/Refrigerator.svg',
+                                    width: 30,
+                                    colorFilter: ColorFilter.mode(
+                                        Theme.of(context).colorScheme.secondary,
+                                        BlendMode.srcIn),
+                                  ),
                                   title: "ตู้เย็นทั้งหมด",
                                   onPressed: () {}),
                               _buildCategoryIcon(
-                                  icon: const Icon(Icons.warning),
+                                  icon: Icon(Icons.warning,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondary),
                                   title: "ใกล้หมดอายุ",
                                   onPressed: () {}),
                               _buildCategoryIcon(
-                                  icon: const Icon(Icons.shopping_bag),
+                                  icon: Icon(
+                                    Icons.shopping_bag,
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
+                                  ),
                                   title: "เหลือน้อย",
                                   onPressed: () {}),
                               _buildCategoryIcon(
-                                  icon: const Icon(Icons.add),
+                                  icon: Icon(
+                                    Icons.add,
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
+                                  ),
                                   title: "เพิ่มรายการ",
                                   onPressed: () {})
                             ],

@@ -20,6 +20,7 @@ class _RefrigeratorsPageState extends State<RefrigeratorsPage> {
     return Scaffold(
       backgroundColor: CustomColors.greyBackground,
       appBar: AppBar(
+        iconTheme: IconThemeData(color: Colors.white),
         centerTitle: true,
         title: Padding(
           padding: const EdgeInsets.only(bottom: 20, top: 20),
