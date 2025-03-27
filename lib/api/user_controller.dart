@@ -13,7 +13,10 @@ class UserController {
     });
   }
 
-  Future<PlatformUser?> getUser(String uid) async {
+  Future<PlatformUser?> getUser(String? uid) async {
+    if (uid == null) {
+      return null;
+    }
     try {
       final user = await _users.doc(uid).get();
       if (user.exists) {
@@ -23,6 +26,15 @@ class UserController {
       }
     } catch (e) {
       throw UserException(e.toString(), "get-user-error");
+    }
+  }
+
+  Future<bool> updateDisplayName(String uid, String newName) {
+    try {
+      _users.doc(uid).update({'displayName': newName});
+      return Future.value(true);
+    } catch (e) {
+      throw UserException(e.toString(), "update-display-name-error");
     }
   }
 }

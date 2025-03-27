@@ -1,6 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mobile_project/api/user_controller.dart';
 import 'package:mobile_project/components/button.dart';
+import 'package:mobile_project/components/icon_dialog.dart';
 import 'package:mobile_project/components/input_feild.dart';
 
 class SetUpDisplayNamePage extends StatefulWidget {
@@ -11,8 +14,15 @@ class SetUpDisplayNamePage extends StatefulWidget {
 }
 
 class _SetUpDisplayNamePageState extends State<SetUpDisplayNamePage> {
+  late UserController _userController;
   final _formKey = GlobalKey<FormState>();
   final _displayNameController = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+    _userController = UserController();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,10 +80,28 @@ class _SetUpDisplayNamePageState extends State<SetUpDisplayNamePage> {
                               borderColor: Colors.black,
                               onPressed: () {
                                 if (_formKey.currentState!.validate()) {
-                                  Navigator.pushNamed(
-                                      context, "/signup/profile", arguments: {
-                                    "name": _displayNameController.text
-                                  });
+                                  try {
+                                    _userController.initUser(
+                                      FirebaseAuth.instance.currentUser!.uid,
+                                      _displayNameController.text,
+                                    );
+                                    Navigator.pushNamed(
+                                      context,
+                                      "/signup/profile",
+                                    );
+                                  } on FirebaseAuthException catch (error) {
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) => const IconDialog(
+                                              icon: Icon(Icons.error),
+                                              title: "Failed to sign up",
+                                              titleColor: Colors.redAccent,
+                                              content:
+                                                  "something went wrong , please try again",
+                                              actionText: "Try again",
+                                              actionColor: Colors.redAccent,
+                                            ));
+                                  }
                                 }
                               },
                             ),

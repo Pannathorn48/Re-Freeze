@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mobile_project/api/user_controller.dart';
 import 'package:mobile_project/components/button.dart';
 import 'package:mobile_project/components/icon_dialog.dart';
 import 'package:mobile_project/components/input_feild.dart';
@@ -17,10 +18,18 @@ class LoginForm extends StatefulWidget {
 }
 
 class _LoginFormState extends State<LoginForm> {
+  late UserController userController;
   bool _isVisible = false;
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    userController = UserController();
+  }
+
   @override
   void dispose() {
     emailController.dispose();
@@ -75,8 +84,12 @@ class _LoginFormState extends State<LoginForm> {
                         .signInWithEmailAndPassword(
                             email: emailController.text,
                             password: passwordController.text);
-                    if (userCredential.user != null && mounted) {
-                      Navigator.of(context).pushNamed("/home");
+                    final exist =
+                        await userController.getUser(userCredential.user!.uid);
+                    if (exist?.displayName == null) {
+                      Navigator.pushNamed(context, "/signup/display-name");
+                    } else {
+                      Navigator.pushNamed(context, '/home');
                     }
                   } on FirebaseAuthException catch (e) {
                     switch (e.code) {
@@ -130,8 +143,16 @@ class _LoginFormState extends State<LoginForm> {
             Button(
               onPressed: () async {
                 try {
-                  await GoogleAuth.signInWithGoogle();
-                  Navigator.pushReplacementNamed(context, "/home");
+                  final userCred = await GoogleAuth.signInWithGoogle();
+                  final exist =
+                      await userController.getUser(userCred.user!.uid);
+                  if (exist?.displayName == null) {
+                    Navigator.pushNamed(context, "/signup/display-name");
+                  } else {
+                    if (mounted) {
+                      Navigator.pushNamed(context, '/home');
+                    }
+                  }
                 } catch (error) {
                   showDialog(
                       context: context,

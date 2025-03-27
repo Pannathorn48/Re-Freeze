@@ -80,7 +80,9 @@ class _SignupProfilePageState extends State<SignupProfilePage> {
       ),
       floatingActionButton: !isSelected
           ? Button(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushNamed(context, "/home");
+              },
               text: "ข้าม",
               width: 150,
               height: 35,

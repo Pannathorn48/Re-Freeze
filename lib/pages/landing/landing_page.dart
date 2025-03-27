@@ -58,7 +58,8 @@ class _LandingPageState extends State<LandingPage> {
                     final userCred = await GoogleAuth.signInWithGoogle();
                     final exist =
                         await userController.getUser(userCred.user!.uid);
-                    if (exist != null) {
+                    print(exist?.displayName ?? "null");
+                    if (exist != null && exist.displayName != null) {
                       Navigator.pushReplacementNamed(context, "/home");
                     } else {
                       Navigator.pushNamed(
@@ -67,6 +68,7 @@ class _LandingPageState extends State<LandingPage> {
                       );
                     }
                   } catch (error) {
+                    debugPrint(error.toString());
                     showDialog(
                         context: context,
                         builder: (context) => const IconDialog(
@@ -74,7 +76,7 @@ class _LandingPageState extends State<LandingPage> {
                               title: "Failed to sign up",
                               titleColor: Colors.redAccent,
                               content:
-                                  "something went wrong , please try again",
+                                  "something went wrong , please try again ",
                               actionText: "Try again",
                               actionColor: Colors.redAccent,
                             ));
