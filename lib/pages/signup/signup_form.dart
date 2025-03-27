@@ -19,7 +19,7 @@ class SignUpForm extends StatefulWidget {
 }
 
 class _SignUpFormState extends State<SignUpForm> {
-  final UserDatabase _userDatabase = UserDatabase();
+  final UserController _userDatabase = UserController();
   final _formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -99,13 +99,12 @@ class _SignUpFormState extends State<SignUpForm> {
                       PlatformUser? currentUser =
                           await _userDatabase.getUser(userCred.user!.uid);
                       if (currentUser?.displayName == null) {
-                        _userDatabase.initUser(userCred.user!.uid,
-                            userCred.user!.displayName ?? "");
                         Navigator.pushNamed(context, "/signup/display-name");
-                      } else {}
-                    }
-                    if (mounted) {
-                      Navigator.pushNamed(context, '/home');
+                      } else {
+                        if (mounted) {
+                          Navigator.pushNamed(context, '/home');
+                        }
+                      }
                     }
                   } on FirebaseAuthException catch (error) {
                     showDialog(

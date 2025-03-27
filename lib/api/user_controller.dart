@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mobile_project/exceptions/user_exception.dart';
 import 'package:mobile_project/models/user.dart';
 
-class UserDatabase {
+class UserController {
   final CollectionReference _users =
       FirebaseFirestore.instance.collection('users');
 
@@ -13,18 +13,28 @@ class UserDatabase {
     });
   }
 
-  Future<PlatformUser?> getUser(String uid) async {
+  Future<PlatformUser?> getUser(String? uid) async {
+    if (uid == null) {
+      return null;
+    }
     try {
-      return _users.doc(uid).get().then((DocumentSnapshot documentSnapshot) {
-        if (documentSnapshot.exists) {
-          return PlatformUser.fromJSON(
-              documentSnapshot.data() as Map<String, dynamic>);
-        } else {
-          return null;
-        }
-      });
+      final user = await _users.doc(uid).get();
+      if (user.exists) {
+        return PlatformUser.fromJSON(user.data() as Map<String, dynamic>);
+      } else {
+        return null;
+      }
     } catch (e) {
       throw UserException(e.toString(), "get-user-error");
+    }
+  }
+
+  Future<bool> updateDisplayName(String uid, String newName) {
+    try {
+      _users.doc(uid).update({'displayName': newName});
+      return Future.value(true);
+    } catch (e) {
+      throw UserException(e.toString(), "update-display-name-error");
     }
   }
 }

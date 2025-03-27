@@ -30,7 +30,9 @@ class RefrigeratorCard extends StatelessWidget {
                 children: [
                   IconButton(
                       onPressed: () {},
-                      icon: const Icon(Icons.favorite_border)),
+                      icon: const Icon(
+                        Icons.favorite_border,
+                      )),
                   IconButton(
                       onPressed: () {
                         showModalBottomSheet(

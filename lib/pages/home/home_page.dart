@@ -1,7 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mobile_project/api/user_controller.dart';
 import 'package:mobile_project/components/search_text_input.dart';
+import 'package:mobile_project/models/user.dart';
 import 'package:mobile_project/pages/home/favorite_refrigerator.dart';
 import 'package:mobile_project/pages/home/notification.dart';
 import 'package:mobile_project/services/providers.dart';
@@ -15,7 +18,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final username = "Pannathorn";
+  late UserController userController;
   final TextEditingController searchController = TextEditingController();
   final ScrollController _favoriteScrollController = ScrollController();
   String searchText = "";
@@ -27,6 +30,19 @@ class _HomePageState extends State<HomePage> {
     Provider.of<LoadingProvider>(context, listen: false).setLoading(false);
   }
 
+  Future<PlatformUser> _fetchData() async {
+    PlatformUser? user =
+        await userController.getUser(FirebaseAuth.instance.currentUser!.uid)!;
+    return user!;
+  }
+
+  @override
+  void initState() {
+    userController = UserController();
+    _fetchData();
+    super.initState();
+  }
+
   @override
   void dispose() {
     searchController.dispose();
@@ -36,121 +52,162 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: RefreshIndicator(
-      onRefresh: _refreshData,
-      color: Theme.of(context).colorScheme.primary,
-      backgroundColor: Colors.white,
-      displacement: 60,
-      strokeWidth: 3,
-      child: SingleChildScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        child: Column(children: [
-          SizedBox(
-            height: 400,
-            child: Stack(
-              alignment: Alignment.topCenter,
-              children: <Widget>[
-                // Background container
-                Container(
-                  height: 320,
-                  width: double.infinity,
-                  color: Theme.of(context).colorScheme.primary,
-                  padding: const EdgeInsets.fromLTRB(20, 80, 20, 20),
+    return FutureBuilder(
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+        if (snapshot.hasError) {
+          return const Center(
+            child: Text("Error loading data"),
+          );
+        }
+        return Scaffold(
+            body: RefreshIndicator(
+          onRefresh: _refreshData,
+          color: Theme.of(context).colorScheme.primary,
+          backgroundColor: Colors.white,
+          displacement: 60,
+          strokeWidth: 3,
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Column(children: [
+              SizedBox(
+                height: 400,
+                child: Stack(
                   alignment: Alignment.topCenter,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Hi, $username",
-                        style: GoogleFonts.notoSansThai(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: Image.asset(
-                          "assets/images/no-image.png",
-                          width: 60,
-                          height: 60,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                Positioned(
-                  top: 150,
-                  left: 0,
-                  right: 0,
-                  child: Center(
-                    child: Container(
-                      width: MediaQuery.of(context).size.width * 0.9,
-                      height: 230,
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.shade500,
-                            spreadRadius: 1,
-                            blurRadius: 2,
-                            offset: const Offset(0, 2),
+                  children: <Widget>[
+                    // Background container
+                    Container(
+                      height: 320,
+                      width: double.infinity,
+                      color: Theme.of(context).colorScheme.primary,
+                      padding: const EdgeInsets.fromLTRB(20, 80, 20, 20),
+                      alignment: Alignment.topCenter,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Hi, ${snapshot.data!.displayName}",
+                            style: GoogleFonts.notoSansThai(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(20),
+                            child: snapshot.data?.profilePictureURL == null
+                                ? Image.asset(
+                                    "assets/images/no-image.png",
+                                    width: 60,
+                                    height: 60,
+                                  )
+                                : Image.network(
+                                    snapshot.data!.profilePictureURL!,
+                                    width: 60,
+                                    height: 60,
+                                  ),
                           ),
                         ],
                       ),
-                      child: Column(
-                        children: [
-                          SearchTextInput(controller: searchController),
-                          const SizedBox(height: 30),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              _buildCategoryIcon(
-                                  icon: SvgPicture.asset(
-                                      'assets/icons/Refrigerator.svg',
-                                      width: 30),
-                                  title: "ตู้เย็นทั้งหมด",
-                                  onPressed: () {}),
-                              _buildCategoryIcon(
-                                  icon: const Icon(Icons.warning),
-                                  title: "ใกล้หมดอายุ",
-                                  onPressed: () {}),
-                              _buildCategoryIcon(
-                                  icon: const Icon(Icons.shopping_bag),
-                                  title: "เหลือน้อย",
-                                  onPressed: () {}),
-                              _buildCategoryIcon(
-                                  icon: const Icon(Icons.add),
-                                  title: "เพิ่มรายการ",
-                                  onPressed: () {})
+                    ),
+
+                    Positioned(
+                      top: 150,
+                      left: 0,
+                      right: 0,
+                      child: Center(
+                        child: Container(
+                          width: MediaQuery.of(context).size.width * 0.9,
+                          height: 230,
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.shade500,
+                                spreadRadius: 1,
+                                blurRadius: 2,
+                                offset: const Offset(0, 2),
+                              ),
                             ],
-                          )
-                        ],
+                          ),
+                          child: Column(
+                            children: [
+                              SearchTextInput(controller: searchController),
+                              const SizedBox(height: 30),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  _buildCategoryIcon(
+                                      icon: SvgPicture.asset(
+                                        'assets/icons/Refrigerator.svg',
+                                        width: 30,
+                                        colorFilter: ColorFilter.mode(
+                                            Theme.of(context)
+                                                .colorScheme
+                                                .secondary,
+                                            BlendMode.srcIn),
+                                      ),
+                                      title: "ตู้เย็นทั้งหมด",
+                                      onPressed: () {}),
+                                  _buildCategoryIcon(
+                                      icon: Icon(Icons.warning,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .secondary),
+                                      title: "ใกล้หมดอายุ",
+                                      onPressed: () {}),
+                                  _buildCategoryIcon(
+                                      icon: Icon(
+                                        Icons.shopping_bag,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .secondary,
+                                      ),
+                                      title: "เหลือน้อย",
+                                      onPressed: () {}),
+                                  _buildCategoryIcon(
+                                      icon: Icon(
+                                        Icons.add,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .secondary,
+                                      ),
+                                      title: "เพิ่มรายการ",
+                                      onPressed: () {})
+                                ],
+                              )
+                            ],
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+              Padding(
+                  padding: const EdgeInsets.only(right: 25, left: 25),
+                  child: Column(
+                    children: [
+                      FavoriteRefrigeratorWidget(
+                          favoriteScrollController: _favoriteScrollController),
+                      const SizedBox(height: 20),
+                      const NotificationWidget(),
+                    ],
+                  )),
+              const SizedBox(height: 50),
+            ]),
           ),
-          Padding(
-              padding: const EdgeInsets.only(right: 25, left: 25),
-              child: Column(
-                children: [
-                  FavoriteRefrigeratorWidget(
-                      favoriteScrollController: _favoriteScrollController),
-                  const SizedBox(height: 20),
-                  const NotificationWidget(),
-                ],
-              )),
-          const SizedBox(height: 50),
-        ]),
-      ),
-    ));
+        ));
+      },
+      future: _fetchData(),
+    );
   }
 
   Widget _buildCategoryIcon({
