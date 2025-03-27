@@ -131,6 +131,7 @@ class _LoginFormState extends State<LoginForm> {
               onPressed: () async {
                 try {
                   await GoogleAuth.signInWithGoogle();
+                  Navigator.pushReplacementNamed(context, "/home");
                 } catch (error) {
                   showDialog(
                       context: context,

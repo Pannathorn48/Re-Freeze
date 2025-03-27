@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_project/components/custom_float_button.dart';
@@ -61,7 +63,10 @@ class _GroupPageState extends State<GroupPage> {
           ),
         ),
       ),
-      floatingActionButton: CustomFloatButton(onPressed: () {}),
+      floatingActionButton: CustomFloatButton(onPressed: () async {
+        await FirebaseAuth.instance.signOut();
+        Navigator.pushReplacementNamed(context, "/landing");
+      }),
     );
   }
 }

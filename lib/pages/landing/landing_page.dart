@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mobile_project/api/user_controller.dart';
 import 'package:mobile_project/components/button.dart';
 import 'package:mobile_project/components/icon_dialog.dart';
 import 'package:mobile_project/services/login_service.dart';
@@ -14,6 +15,13 @@ class LandingPage extends StatefulWidget {
 }
 
 class _LandingPageState extends State<LandingPage> {
+  late UserController userController;
+  @override
+  void initState() {
+    super.initState();
+    userController = UserController();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,7 +55,17 @@ class _LandingPageState extends State<LandingPage> {
               child: Button(
                 onPressed: () async {
                   try {
-                    await GoogleAuth.signInWithGoogle();
+                    final userCred = await GoogleAuth.signInWithGoogle();
+                    final exist =
+                        await userController.getUser(userCred.user!.uid);
+                    if (exist != null) {
+                      Navigator.pushReplacementNamed(context, "/home");
+                    } else {
+                      Navigator.pushNamed(
+                        context,
+                        "/signup/display-name",
+                      );
+                    }
                   } catch (error) {
                     showDialog(
                         context: context,

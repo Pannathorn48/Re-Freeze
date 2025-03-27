@@ -68,7 +68,14 @@ class _SetUpDisplayNamePageState extends State<SetUpDisplayNamePage> {
                               backgroundColor:
                                   Theme.of(context).colorScheme.primary,
                               borderColor: Colors.black,
-                              onPressed: () {},
+                              onPressed: () {
+                                if (_formKey.currentState!.validate()) {
+                                  Navigator.pushNamed(
+                                      context, "/signup/profile", arguments: {
+                                    "name": _displayNameController.text
+                                  });
+                                }
+                              },
                             ),
                           ),
                         ],

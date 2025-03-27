@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:mobile_project/pages/item-list/item_list_page.dart';
@@ -35,7 +36,6 @@ const themeColor = Colors.lightBlue;
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    final isLoadingProvider = Provider.of<LoadingProvider>(context);
     return MaterialApp(
       title: 'Refreeze',
       theme: ThemeData(
@@ -49,23 +49,16 @@ class _MyAppState extends State<MyApp> {
         ),
         useMaterial3: true,
       ),
-      home: Stack(
-        children: [
-          const BottomNavBar(),
-          if (isLoadingProvider.isLoading)
-            Container(
-              color: Colors.black.withValues(alpha: 0.1),
-            ),
-        ],
-      ),
       // initialRoute: '/item-list',
-      // FirebaseAuth.instance.currentUser == null ? '/signup' : '/home',
+      initialRoute:
+          FirebaseAuth.instance.currentUser == null ? '/landing' : '/home',
       routes: pagesRoutes,
     );
   }
 }
 
 Map<String, Widget Function(BuildContext)> pagesRoutes = {
+  '/home': (context) => const BottomNavBar(),
   '/landing': (context) => const LandingPage(),
   '/login': (context) => const LoginPage(),
   // sign up

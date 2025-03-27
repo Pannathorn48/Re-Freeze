@@ -19,7 +19,7 @@ class SignUpForm extends StatefulWidget {
 }
 
 class _SignUpFormState extends State<SignUpForm> {
-  final UserDatabase _userDatabase = UserDatabase();
+  final UserController _userDatabase = UserController();
   final _formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
