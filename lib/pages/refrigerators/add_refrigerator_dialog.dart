@@ -7,8 +7,16 @@ import 'package:mobile_project/models/dropdownable.dart';
 import 'package:mobile_project/models/group.dart';
 
 final groupList = <Group>[
-  Group(name: "Tester", color: Colors.purple),
-  Group(name: "Meet", color: Colors.redAccent)
+  Group(
+      name: "Tester",
+      color: Colors.purple,
+      creatorName: 'test',
+      description: ''),
+  Group(
+      name: "Meet",
+      color: Colors.redAccent,
+      creatorName: 'test',
+      description: '')
 ];
 
 class AddRefrigeratorDialog extends StatefulWidget {

@@ -169,7 +169,7 @@ class _HomePageState extends State<HomePage> {
               iconSize: 30,
               shape: const CircleBorder(),
               padding: const EdgeInsets.all(20),
-              backgroundColor: Colors.blue[100],
+              backgroundColor: Theme.of(context).colorScheme.primaryContainer,
             ),
           ),
           const SizedBox(

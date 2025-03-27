@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:mobile_project/pages/item-list/item_list_page.dart';
 import 'package:mobile_project/pages/landing/landing_page.dart';
 import 'package:mobile_project/pages/login/login_page.dart';
+import 'package:mobile_project/pages/refrigerators/refrigerators_page.dart';
 import 'package:mobile_project/pages/signup/signup_page.dart';
 import 'package:mobile_project/pages/signup/signup_display_name_page.dart';
 import 'package:mobile_project/pages/signup/signup_profile_page.dart';
@@ -29,6 +30,8 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
+const themeColor = Colors.lightBlue;
+
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
@@ -37,9 +40,9 @@ class _MyAppState extends State<MyApp> {
       title: 'Refreeze',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSwatch(
-          primarySwatch: Colors.lightBlue,
+          primarySwatch: themeColor,
           accentColor: Colors.blueAccent,
-        ).copyWith(outline: Colors.lightBlue),
+        ).copyWith(outline: themeColor, primaryContainer: themeColor[100]),
         useMaterial3: true,
       ),
       home: Stack(
@@ -67,4 +70,5 @@ Map<String, Widget Function(BuildContext)> pagesRoutes = {
   '/signup/profile': (context) => const SignupProfilePage(),
   // item list
   '/item-list': (context) => const ItemListPage(),
+  '/refrigerators': (context) => const RefrigeratorsPage()
 };

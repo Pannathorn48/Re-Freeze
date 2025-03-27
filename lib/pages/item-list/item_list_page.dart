@@ -40,7 +40,7 @@ class _ItemListPageState extends State<ItemListPage> {
         backgroundColor: CustomColors.greyBackground,
         appBar: AppBar(
           centerTitle: true,
-          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+          backgroundColor: Theme.of(context).colorScheme.primary,
           leading: IconButton(
               onPressed: () {
                 Navigator.pop(context);
