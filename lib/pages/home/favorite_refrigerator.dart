@@ -1,7 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mobile_project/api/refrigerator_api.dart';
 import 'package:mobile_project/models/refrigerators_model.dart';
 import 'package:mobile_project/pages/home/favorite_refrigerator_card.dart';
 import 'package:mobile_project/services/custom_theme.dart';

@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:mobile_project/components/button.dart';
 import 'package:mobile_project/components/input_field_rounded.dart';
 import 'package:mobile_project/models/dropdownable_model.dart';
@@ -15,8 +18,8 @@ class AddItemDialog extends StatefulWidget {
 }
 
 List<Tag> list = [
-  Tag(name: "อาหาร", color: Colors.red),
-  Tag(name: "เครื่องดื่ม", color: Colors.blue)
+  // Tag(name: "อาหาร", color: Colors.red),
+  // Tag(name: "เครื่องดื่ม", color: Colors.blue)
 ];
 
 class _AddItemDialogState extends State<AddItemDialog> {
@@ -30,6 +33,8 @@ class _AddItemDialogState extends State<AddItemDialog> {
   DateTime? _warnDate = DateTime.now();
   final ScrollController _scrollController = ScrollController();
   Tag? dropDownValue = list[0];
+  ImagePicker _imagePicker = ImagePicker();
+  late File? image = null;
 
   @override
   void dispose() {
@@ -148,8 +153,17 @@ class _AddItemDialogState extends State<AddItemDialog> {
                                 SizedBox(
                                   width: 150,
                                   height: 150,
-                                  child:
-                                      Image.asset("assets/images/no-image.png"),
+                                  child: ClipOval(
+                                    child: image == null
+                                        ? Image.asset(
+                                            "assets/images/no-image.png",
+                                            fit: BoxFit.cover,
+                                          )
+                                        : Image.file(
+                                            image!,
+                                            fit: BoxFit.cover,
+                                          ),
+                                  ),
                                 ),
                                 const SizedBox(height: 10),
                                 ElevatedButton.icon(
@@ -179,7 +193,16 @@ class _AddItemDialogState extends State<AddItemDialog> {
                                 SizedBox(
                                   width: 130,
                                   child: ElevatedButton.icon(
-                                    onPressed: () {},
+                                    onPressed: () async {
+                                      XFile? image =
+                                          await _imagePicker.pickImage(
+                                              source: ImageSource.gallery);
+                                      if (image != null) {
+                                        setState(() {
+                                          this.image = File(image.path);
+                                        });
+                                      }
+                                    },
                                     icon: const Icon(Icons.photo),
                                     label: const Text("gallery"),
                                   ),
@@ -192,8 +215,14 @@ class _AddItemDialogState extends State<AddItemDialog> {
                         Padding(
                           padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
                           child: InputFieldRounded(
-                              hintText: "ชื่อสินค้า",
-                              controller: nameTextController),
+                            hintText: "ชื่อสินค้า",
+                            controller: nameTextController,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "กรุณากรอกชื่อสินค้า";
+                              }
+                            },
+                          ),
                         ),
                         const SizedBox(height: 20),
                         Center(
@@ -291,7 +320,9 @@ class _AddItemDialogState extends State<AddItemDialog> {
                                 overlayColor: Colors.white,
                                 backgroundColor: Colors.red),
                             Button(
-                                onPressed: () {},
+                                onPressed: () {
+                                  _formKey.currentState!.validate();
+                                },
                                 text: "ตกลง",
                                 width: 150,
                                 height: 30,

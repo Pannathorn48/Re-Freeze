@@ -7,6 +7,7 @@ import 'package:mobile_project/api/user_api.dart';
 import 'package:mobile_project/models/refrigerators_model.dart';
 import 'package:mobile_project/models/user.dart';
 import 'package:mobile_project/pages/home/favorite_refrigerator.dart';
+import 'package:mobile_project/pages/home/home_add_dialog.dart';
 import 'package:mobile_project/pages/home/notification.dart';
 import 'package:mobile_project/pages/home/profile_widget.dart';
 import 'package:mobile_project/services/providers.dart';
@@ -92,8 +93,22 @@ class _HomePageState extends State<HomePage> {
                     Container(
                       height: 320,
                       width: double.infinity,
-                      color: Theme.of(context).colorScheme.primary,
                       padding: const EdgeInsets.fromLTRB(20, 80, 20, 20),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primary,
+                        borderRadius: const BorderRadius.only(
+                          bottomLeft: Radius.circular(30),
+                          bottomRight: Radius.circular(30),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.shade500,
+                            spreadRadius: 1,
+                            blurRadius: 2,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
                       alignment: Alignment.topCenter,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -182,7 +197,10 @@ class _HomePageState extends State<HomePage> {
                                             BlendMode.srcIn),
                                       ),
                                       title: "ตู้เย็นทั้งหมด",
-                                      onPressed: () {}),
+                                      onPressed: () {
+                                        Navigator.pushNamed(
+                                            context, "/refrigerators");
+                                      }),
                                   _buildCategoryIcon(
                                       icon: Icon(Icons.warning,
                                           color: Theme.of(context)
@@ -207,7 +225,13 @@ class _HomePageState extends State<HomePage> {
                                             .secondary,
                                       ),
                                       title: "เพิ่มรายการ",
-                                      onPressed: () {})
+                                      onPressed: () {
+                                        showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return TabbedDialog();
+                                            });
+                                      })
                                 ],
                               )
                             ],

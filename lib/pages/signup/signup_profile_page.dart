@@ -138,7 +138,7 @@ class _SignupProfilePageState extends State<SignupProfilePage> {
                 try {
                   String fileExtension = path.extension(image!.path);
 
-                  String storagePath =
+                 String storagePath =
                       '/profile/${FirebaseAuth.instance.currentUser!.uid}$fileExtension';
 
                   String fullPath = await Supabase.instance.client.storage
