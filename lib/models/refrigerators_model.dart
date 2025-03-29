@@ -14,8 +14,6 @@ class Refrigerator {
   }
 
   static Refrigerator fromJson(Map<String, dynamic> ref) {
-    print(ref['uid'] as String);
-    print(ref['name'] as String);
     return Refrigerator(
       uid: ref['uid'] as String,
       name: ref['name'] as String,
