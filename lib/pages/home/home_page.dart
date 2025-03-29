@@ -4,11 +4,14 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_project/api/user_controller.dart';
 import 'package:mobile_project/components/search_text_input.dart';
+import 'package:mobile_project/exceptions/user_exception.dart';
 import 'package:mobile_project/models/user.dart';
 import 'package:mobile_project/pages/home/favorite_refrigerator.dart';
 import 'package:mobile_project/pages/home/notification.dart';
+import 'package:mobile_project/pages/home/profile_widget.dart';
 import 'package:mobile_project/services/providers.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -100,15 +103,23 @@ class _HomePageState extends State<HomePage> {
                           ClipRRect(
                             borderRadius: BorderRadius.circular(20),
                             child: snapshot.data?.profilePictureURL == null
-                                ? Image.asset(
-                                    "assets/images/no-image.png",
-                                    width: 60,
-                                    height: 60,
+                                ? Container(
+                                    padding: const EdgeInsets.all(4),
+                                    decoration: BoxDecoration(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primaryContainer,
+                                        borderRadius:
+                                            BorderRadius.circular(100)),
+                                    child: Icon(
+                                      Icons.person,
+                                      size: 40,
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                    ),
                                   )
-                                : Image.network(
-                                    snapshot.data!.profilePictureURL!,
-                                    width: 60,
-                                    height: 60,
+                                : ProfileWidget(
+                                    context: context,
                                   ),
                           ),
                         ],
@@ -137,8 +148,17 @@ class _HomePageState extends State<HomePage> {
                             ],
                           ),
                           child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              SearchTextInput(controller: searchController),
+                              const SizedBox(height: 10),
+                              // SearchTextInput(controller: searchController),
+                              Text("หมวดหมู่",
+                                  style: GoogleFonts.notoSansThai(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                  )),
                               const SizedBox(height: 30),
                               Row(
                                 mainAxisAlignment:
