@@ -10,11 +10,17 @@ import 'package:mobile_project/pages/signup/signup_display_name_page.dart';
 import 'package:mobile_project/pages/signup/signup_profile_page.dart';
 import 'package:mobile_project/services/custom_navbar.dart';
 import 'package:mobile_project/services/providers.dart';
+import 'package:mobile_project/supabase_key.dart';
 import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Supabase.initialize(
+    url: SupabaseKey.url,
+    anonKey: SupabaseKey.anonKey,
+  );
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
