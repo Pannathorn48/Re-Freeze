@@ -4,15 +4,14 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_project/api/refrigerator_api.dart';
 import 'package:mobile_project/api/user_api.dart';
-import 'package:mobile_project/components/search_text_input.dart';
-import 'package:mobile_project/exceptions/user_exception.dart';
+import 'package:mobile_project/models/refrigerators_model.dart';
 import 'package:mobile_project/models/user.dart';
 import 'package:mobile_project/pages/home/favorite_refrigerator.dart';
+import 'package:mobile_project/pages/home/home_add_dialog.dart';
 import 'package:mobile_project/pages/home/notification.dart';
 import 'package:mobile_project/pages/home/profile_widget.dart';
 import 'package:mobile_project/services/providers.dart';
 import 'package:provider/provider.dart';
-import 'package:http/http.dart' as http;
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -35,13 +34,15 @@ class _HomePageState extends State<HomePage> {
     Provider.of<LoadingProvider>(context, listen: false).setLoading(false);
   }
 
-  Future<PlatformUser> _fetchData() async {
+  Future<Map<String, dynamic>> _fetchData() async {
     PlatformUser? user =
-        await userApi.getUser(FirebaseAuth.instance.currentUser!.uid)!;
-    print("user refrigerators : ${user?.refrigeratorsArray}");
-    final refrigerators = await refrigeratorApi.getRefrigeratorsFromUserId(user!.uid);
-    print(refrigerators);
-    return user!;
+        await userApi.getUser(FirebaseAuth.instance.currentUser!.uid);
+    List<Refrigerator> favoriteRefrigerator = await refrigeratorApi
+        .getFavoriteRefrigerators(FirebaseAuth.instance.currentUser!.uid);
+    return {
+      "user": user,
+      "refrigerators": favoriteRefrigerator,
+    };
   }
 
   @override
@@ -92,14 +93,28 @@ class _HomePageState extends State<HomePage> {
                     Container(
                       height: 320,
                       width: double.infinity,
-                      color: Theme.of(context).colorScheme.primary,
                       padding: const EdgeInsets.fromLTRB(20, 80, 20, 20),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primary,
+                        borderRadius: const BorderRadius.only(
+                          bottomLeft: Radius.circular(30),
+                          bottomRight: Radius.circular(30),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.shade500,
+                            spreadRadius: 1,
+                            blurRadius: 2,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
                       alignment: Alignment.topCenter,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "Hi, ${snapshot.data!.displayName}",
+                            "Hi, ${snapshot.data!["user"].displayName}",
                             style: GoogleFonts.notoSansThai(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
@@ -108,7 +123,8 @@ class _HomePageState extends State<HomePage> {
                           ),
                           ClipRRect(
                             borderRadius: BorderRadius.circular(20),
-                            child: snapshot.data?.profilePictureURL == null
+                            child: snapshot.data?["user"].profilePictureURL ==
+                                    null
                                 ? Container(
                                     padding: const EdgeInsets.all(4),
                                     decoration: BoxDecoration(
@@ -181,7 +197,10 @@ class _HomePageState extends State<HomePage> {
                                             BlendMode.srcIn),
                                       ),
                                       title: "ตู้เย็นทั้งหมด",
-                                      onPressed: () {}),
+                                      onPressed: () {
+                                        Navigator.pushNamed(
+                                            context, "/refrigerators");
+                                      }),
                                   _buildCategoryIcon(
                                       icon: Icon(Icons.warning,
                                           color: Theme.of(context)
@@ -206,7 +225,13 @@ class _HomePageState extends State<HomePage> {
                                             .secondary,
                                       ),
                                       title: "เพิ่มรายการ",
-                                      onPressed: () {})
+                                      onPressed: () {
+                                        showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return TabbedDialog();
+                                            });
+                                      })
                                 ],
                               )
                             ],
@@ -222,6 +247,8 @@ class _HomePageState extends State<HomePage> {
                   child: Column(
                     children: [
                       FavoriteRefrigeratorWidget(
+                          favoriteRefrigerators: snapshot.data!["refrigerators"]
+                              as List<Refrigerator>,
                           favoriteScrollController: _favoriteScrollController),
                       const SizedBox(height: 20),
                       const NotificationWidget(),

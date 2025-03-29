@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mobile_project/exceptions/user_exception.dart';
 import 'package:mobile_project/models/user.dart';
+import 'package:mobile_project/services/image_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class UserApi {
@@ -53,15 +54,9 @@ class UserApi {
       PlatformUser? user = await getUser(uid);
       if (user != null && user.profilePictureURL != null) {
         String path = user.profilePictureURL!;
-        if (path.startsWith('mobile-image/')) {
-          path = path.replaceFirst('mobile-image/', '');
-        }
+        String? result = ImageService.getSignURL(path);
 
-        final String signedURL = await Supabase.instance.client.storage
-            .from('mobile-image')
-            .getPublicUrl(path);
-
-        return signedURL;
+        return result;
       } else {
         return null;
       }

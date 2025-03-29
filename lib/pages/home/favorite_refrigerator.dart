@@ -1,19 +1,18 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mobile_project/api/refrigerator_api.dart';
+import 'package:mobile_project/models/refrigerators_model.dart';
 import 'package:mobile_project/pages/home/favorite_refrigerator_card.dart';
 import 'package:mobile_project/services/custom_theme.dart';
 
 class FavoriteRefrigeratorWidget extends StatelessWidget {
-  FavoriteRefrigeratorWidget({
+  final List<Refrigerator> favoriteRefrigerators;
+  const FavoriteRefrigeratorWidget({
     super.key,
     required ScrollController favoriteScrollController,
+    required this.favoriteRefrigerators,
   }) : _favoriteScrollController = favoriteScrollController;
 
   final ScrollController _favoriteScrollController;
-  final RefrigeratorApi refrigeratorApi = RefrigeratorApi();
 
   @override
   Widget build(BuildContext context) {
@@ -31,24 +30,18 @@ class FavoriteRefrigeratorWidget extends StatelessWidget {
           thumbVisibility: true,
           thickness: 3,
           controller: _favoriteScrollController,
-          child: FutureBuilder(
-              future: refrigeratorApi.getFavoriteRefrigerators(
-                  FirebaseAuth.instance.currentUser!.uid),
-              builder: (context, snapshot) {
-                return ListView.builder(
-                  controller: _favoriteScrollController,
-                  itemCount: snapshot.data?.length ?? 0,
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, index) {
-                    return FavoriteRefrigeratorCard(
-                      refrigeratorImage:
-                          Image.asset("assets/images/no-image.png"),
-                      refrigeratorName: snapshot.data![index].name,
-                      onTap: () {},
-                    );
-                  },
-                );
-              }),
+          child: ListView.builder(
+            controller: _favoriteScrollController,
+            itemCount: favoriteRefrigerators.length,
+            scrollDirection: Axis.horizontal,
+            itemBuilder: (context, index) {
+              return FavoriteRefrigeratorCard(
+                refrigeratorImage: Image.asset("assets/images/no-image.png"),
+                refrigeratorName: favoriteRefrigerators[index].name,
+                onTap: () {},
+              );
+            },
+          ),
         ),
       ),
     ]);

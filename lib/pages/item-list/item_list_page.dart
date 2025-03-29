@@ -28,8 +28,9 @@ class _ItemListPageState extends State<ItemListPage> {
       quantity: 10,
       expiryDate: DateTime.now(),
       imageUrl: "test",
-      tags: [Tag(name: "Hello", color: Colors.red)],
+      tags: [Tag(name: "Hello", color: Colors.red, uid: '')],
       unit: "ฟอง",
+      warningDate: DateTime.now().add(const Duration(days: 3)),
     );
     items = [testItem, testItem, testItem, testItem];
   }
