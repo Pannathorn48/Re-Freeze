@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -26,54 +27,134 @@ class _HomePageState extends State<HomePage> {
   final TextEditingController searchController = TextEditingController();
   final ScrollController _favoriteScrollController = ScrollController();
   String searchText = "";
+  bool _isLoading = false;
 
-  // Method to simulate data loading
-  Future<void> _refreshData() async {
-    Provider.of<LoadingProvider>(context, listen: false).setLoading(true);
-    await Future.delayed(const Duration(seconds: 2));
-    Provider.of<LoadingProvider>(context, listen: false).setLoading(false);
+  // Stream controller to manage data stream
+  late StreamController<Map<String, dynamic>> _dataStreamController;
+
+  // Initialize stream and fetch initial data
+  void _initializeDataStream() {
+    _dataStreamController = StreamController<Map<String, dynamic>>();
+    // Use addPostFrameCallback to avoid setting state during build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _fetchAndAddData();
+    });
   }
 
-  Future<Map<String, dynamic>> _fetchData() async {
-    PlatformUser? user =
-        await userApi.getUser(FirebaseAuth.instance.currentUser!.uid);
-    List<Refrigerator> favoriteRefrigerator = await refrigeratorApi
-        .getFavoriteRefrigerators(FirebaseAuth.instance.currentUser!.uid);
-    return {
-      "user": user,
-      "refrigerators": favoriteRefrigerator,
-    };
+  // Fetch data and add to stream
+  Future<void> _fetchAndAddData() async {
+    try {
+      // Set local loading state instead of using Provider during initialization
+      setState(() {
+        _isLoading = true;
+      });
+
+      // After the widget is fully built, now it's safe to update the provider
+      if (mounted) {
+        Provider.of<LoadingProvider>(context, listen: false).setLoading(true);
+      }
+
+      PlatformUser? user =
+          await userApi.getUser(FirebaseAuth.instance.currentUser!.uid);
+      List<Refrigerator> favoriteRefrigerator = await refrigeratorApi
+          .getFavoriteRefrigerators(FirebaseAuth.instance.currentUser!.uid);
+
+      final data = {
+        "user": user,
+        "refrigerators": favoriteRefrigerator,
+      };
+
+      if (!_dataStreamController.isClosed && mounted) {
+        _dataStreamController.add(data);
+      }
+
+      // Update loading states
+      setState(() {
+        _isLoading = false;
+      });
+
+      if (mounted) {
+        Provider.of<LoadingProvider>(context, listen: false).setLoading(false);
+      }
+    } catch (error) {
+      if (!_dataStreamController.isClosed && mounted) {
+        _dataStreamController.addError(error);
+        setState(() {
+          _isLoading = false;
+        });
+
+        if (mounted) {
+          Provider.of<LoadingProvider>(context, listen: false)
+              .setLoading(false);
+        }
+      }
+    }
+  }
+
+  // Method to refresh data
+  Future<void> _refreshData() async {
+    return _fetchAndAddData();
   }
 
   @override
   void initState() {
+    super.initState();
     userApi = UserApi();
     refrigeratorApi = RefrigeratorApi();
-    _fetchData();
-    super.initState();
+    _initializeDataStream();
   }
 
   @override
   void dispose() {
     searchController.dispose();
     _favoriteScrollController.dispose();
+    _dataStreamController.close();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
+    return StreamBuilder<Map<String, dynamic>>(
+      stream: _dataStreamController.stream,
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(),
+        // Show loading indicator for initial load
+        if ((snapshot.connectionState == ConnectionState.waiting &&
+                !snapshot.hasData) ||
+            _isLoading) {
+          return const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
           );
         }
+
         if (snapshot.hasError) {
-          return const Center(
-            child: Text("Error loading data"),
+          return Scaffold(
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text("Error loading data"),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: _refreshData,
+                    child: const Text("Try Again"),
+                  ),
+                ],
+              ),
+            ),
           );
         }
+
+        if (!snapshot.hasData) {
+          return const Scaffold(
+            body: Center(
+              child: Text("No data available"),
+            ),
+          );
+        }
+
+        // Main UI with refreshed data
         return Scaffold(
             body: RefreshIndicator(
           onRefresh: _refreshData,
@@ -148,6 +229,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
 
+                    // Rest of your UI components
                     Positioned(
                       top: 150,
                       left: 0,
@@ -173,7 +255,6 @@ class _HomePageState extends State<HomePage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const SizedBox(height: 10),
-                              // SearchTextInput(controller: searchController),
                               Text("หมวดหมู่",
                                   style: GoogleFonts.notoSansThai(
                                     fontSize: 20,
@@ -229,7 +310,7 @@ class _HomePageState extends State<HomePage> {
                                         showDialog(
                                             context: context,
                                             builder: (context) {
-                                              return TabbedDialog();
+                                              return const TabbedDialog();
                                             });
                                       })
                                 ],
@@ -259,7 +340,6 @@ class _HomePageState extends State<HomePage> {
           ),
         ));
       },
-      future: _fetchData(),
     );
   }
 

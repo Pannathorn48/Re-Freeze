@@ -44,7 +44,7 @@ class Tag extends Dropdownable {
     return Tag(
       uid: json['uid'],
       name: json['name'],
-      color: Color(int.parse("0X" + json['color'])),
+      color: Color(int.parse("0X${json['color']}")),
     );
   }
 

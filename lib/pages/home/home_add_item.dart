@@ -1,9 +1,11 @@
 // First tab - Add Item (from existing code)
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mobile_project/api/item_preset_api.dart';
 import 'package:mobile_project/api/tag_api.dart';
 import 'package:mobile_project/components/button.dart';
 import 'package:mobile_project/components/input_field_rounded.dart';
@@ -11,6 +13,7 @@ import 'package:mobile_project/models/dropdownable_model.dart';
 import 'package:mobile_project/models/item_model.dart';
 import 'package:mobile_project/pages/item-list/date_picker.dart';
 import 'package:mobile_project/pages/item-list/tag_selector.dart';
+import 'package:mobile_project/services/image_service.dart';
 
 class AddItemTab extends StatefulWidget {
   const AddItemTab({super.key});
@@ -20,6 +23,7 @@ class AddItemTab extends StatefulWidget {
 }
 
 class _AddItemTabState extends State<AddItemTab> {
+  final _itemPresetApi = ItemPresetApi();
   final _tagApi = TagApi();
   final _formKey = GlobalKey<FormState>();
   final nameTextController = TextEditingController();
@@ -258,7 +262,6 @@ class _AddItemTabState extends State<AddItemTab> {
                         if (newTag != null && !tags.contains(newTag)) {
                           setState(() {
                             tags.add(newTag);
-                            // dropDownValue = newTag;
                           });
                         }
                       },
@@ -329,9 +332,64 @@ class _AddItemTabState extends State<AddItemTab> {
                             overlayColor: Colors.white,
                             backgroundColor: Colors.red),
                         Button(
-                            onPressed: () {
+                            onPressed: () async {
                               if (_formKey.currentState!.validate()) {
-                                // Handle form submission
+                                // Show loading indicator
+                                showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (context) => const Center(
+                                      child: CircularProgressIndicator()),
+                                );
+
+                                try {
+                                  // Upload image if exists
+                                  String imageUrl = '';
+                                  if (image != null) {
+                                    imageUrl = await ImageService.uploadImage(
+                                        image!.path, 'item');
+                                  } else {
+                                    throw Exception(
+                                        'Image is required to create an item preset');
+                                  }
+
+                                  List<DocumentReference> tagRefs = tags
+                                      .map((tag) => FirebaseFirestore.instance
+                                          .collection('tags')
+                                          .doc(tag.uid))
+                                      .toList();
+
+                                  // Create the item preset
+                                  await _itemPresetApi.createItemPreset(
+                                    name: nameTextController.text,
+                                    imageUrl: imageUrl,
+                                    unit: unitTextController.text,
+                                    quantity: int.tryParse(
+                                            quantityTextController.text) ??
+                                        0,
+                                    expiryDate: _expireDate ?? DateTime.now(),
+                                    warningDate: _warnDate ?? DateTime.now(),
+                                    tags: tagRefs,
+                                  );
+
+                                  Navigator.of(context).pop();
+
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text(
+                                            'Item preset created successfully')),
+                                  );
+
+                                  Navigator.of(context).pop();
+                                } catch (e) {
+                                  Navigator.of(context).pop();
+
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content: Text(
+                                            'Error creating item preset: $e')),
+                                  );
+                                }
                               }
                             },
                             text: "ตกลง",

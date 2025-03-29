@@ -1,5 +1,8 @@
+import 'dart:io';
 import 'package:mobile_project/exceptions/user_exception.dart';
+import 'package:path/path.dart' as path;
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:uuid/uuid.dart';
 
 class ImageService {
   static String getSignURL(String path) {
@@ -19,5 +22,16 @@ class ImageService {
     }
   }
 
+  static Future<String> uploadImage(String imagePath, String dest) async {
+    String fileExtension = path.extension(imagePath);
+    String uuid = const Uuid().v4();
 
+    String storagePath = '/$dest/$uuid$fileExtension';
+
+    String fullPath = await Supabase.instance.client.storage
+        .from('mobile-image')
+        .upload(storagePath, File(imagePath));
+
+    return fullPath;
+  }
 }

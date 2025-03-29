@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_project/components/custom_float_button.dart';
 import 'package:mobile_project/models/group_model.dart';
 import 'package:mobile_project/pages/group/group_card.dart';
+import 'package:mobile_project/pages/group/group_create.dart';
 import 'package:mobile_project/services/custom_theme.dart';
 
 final groups = <Group>[
@@ -63,9 +64,12 @@ class _GroupPageState extends State<GroupPage> {
           ),
         ),
       ),
-      floatingActionButton: CustomFloatButton(onPressed: () async {
-        await FirebaseAuth.instance.signOut();
-        Navigator.pushReplacementNamed(context, "/landing");
+      floatingActionButton: CustomFloatButton(onPressed: () {
+        showDialog(
+            context: context,
+            builder: (context) {
+              return const CreateGroupDialog();
+            });
       }),
     );
   }

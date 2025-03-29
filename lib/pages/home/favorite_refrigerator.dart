@@ -16,6 +16,15 @@ class FavoriteRefrigeratorWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (favoriteRefrigerators.isEmpty) {
+      return Container(
+        padding: const EdgeInsets.all(10),
+        child: Text(
+          "ไม่มีตู้เย็นที่ชื่นชอบ",
+          style: GoogleFonts.notoSansThai(color: CustomColors.grey),
+        ),
+      );
+    }
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Text(
         "favorite",
