@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_project/components/custom_bottom_sheet.dart';
 import 'package:mobile_project/components/custom_bottom_sheet_input.dart';
-import 'package:mobile_project/models/group.dart';
+import 'package:mobile_project/models/group_model.dart';
 
 class GroupCard extends StatelessWidget {
   final Group group;

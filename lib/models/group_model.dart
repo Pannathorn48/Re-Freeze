@@ -1,4 +1,4 @@
-import 'package:mobile_project/models/dropdownable.dart';
+import 'package:mobile_project/models/dropdownable_model.dart';
 
 class Group extends Dropdownable {
   final String creatorName;

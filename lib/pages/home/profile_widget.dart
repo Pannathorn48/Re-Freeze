@@ -1,10 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:mobile_project/api/user_controller.dart';
+import 'package:mobile_project/api/user_api.dart';
 
 class ProfileWidget extends StatelessWidget {
   final BuildContext context;
-  final UserController userController = UserController();
+  final UserApi userController = UserApi();
   ProfileWidget({super.key, required this.context});
   Future<Widget> _loadImage() async {
     String? uid = FirebaseAuth.instance.currentUser?.uid;

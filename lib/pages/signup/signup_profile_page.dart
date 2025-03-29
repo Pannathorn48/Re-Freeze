@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:mobile_project/api/user_controller.dart';
+import 'package:mobile_project/api/user_api.dart';
 import 'package:mobile_project/components/button.dart';
 import 'package:mobile_project/components/icon_dialog.dart';
 import 'package:mobile_project/services/custom_theme.dart';
@@ -20,7 +20,7 @@ class SignupProfilePage extends StatefulWidget {
 }
 
 class _SignupProfilePageState extends State<SignupProfilePage> {
-  final UserController userController = UserController();
+  final UserApi userController = UserApi();
   XFile? image;
   final ImagePicker _picker = ImagePicker();
   bool isSelected = false;

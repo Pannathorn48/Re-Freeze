@@ -3,7 +3,7 @@ import 'package:mobile_project/exceptions/user_exception.dart';
 import 'package:mobile_project/models/user.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class UserController {
+class UserApi {
   final CollectionReference _users =
       FirebaseFirestore.instance.collection('users');
 
@@ -52,7 +52,6 @@ class UserController {
     try {
       PlatformUser? user = await getUser(uid);
       if (user != null && user.profilePictureURL != null) {
-        // Remove the bucket name from the path
         String path = user.profilePictureURL!;
         if (path.startsWith('mobile-image/')) {
           path = path.replaceFirst('mobile-image/', '');
@@ -69,5 +68,9 @@ class UserController {
     } catch (e) {
       throw UserException(e.toString(), UserException.imageFetchException);
     }
+  }
+
+  Stream<QuerySnapshot<Object?>> getFavritesRefrigerators(String uid) {
+    return _users.doc(uid).collection('refrigerators').snapshots();
   }
 }

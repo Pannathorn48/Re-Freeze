@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mobile_project/api/user_controller.dart';
+import 'package:mobile_project/api/user_api.dart';
 import 'package:mobile_project/components/button.dart';
 import 'package:mobile_project/components/icon_dialog.dart';
 import 'package:mobile_project/components/input_feild.dart';
@@ -14,13 +14,13 @@ class SetUpDisplayNamePage extends StatefulWidget {
 }
 
 class _SetUpDisplayNamePageState extends State<SetUpDisplayNamePage> {
-  late UserController _userController;
+  late UserApi _userController;
   final _formKey = GlobalKey<FormState>();
   final _displayNameController = TextEditingController();
   @override
   void initState() {
     super.initState();
-    _userController = UserController();
+    _userController = UserApi();
   }
 
   @override

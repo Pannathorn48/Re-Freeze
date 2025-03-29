@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mobile_project/api/user_controller.dart';
+import 'package:mobile_project/api/user_api.dart';
 import 'package:mobile_project/components/button.dart';
 import 'package:mobile_project/components/icon_dialog.dart';
 import 'package:mobile_project/components/input_feild.dart';
@@ -18,7 +18,7 @@ class LoginForm extends StatefulWidget {
 }
 
 class _LoginFormState extends State<LoginForm> {
-  late UserController userController;
+  late UserApi userController;
   bool _isVisible = false;
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -27,7 +27,7 @@ class _LoginFormState extends State<LoginForm> {
   @override
   void initState() {
     super.initState();
-    userController = UserController();
+    userController = UserApi();
   }
 
   @override

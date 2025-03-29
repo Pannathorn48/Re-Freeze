@@ -2,7 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mobile_project/api/user_controller.dart';
+import 'package:mobile_project/api/user_api.dart';
 import 'package:mobile_project/components/button.dart';
 import 'package:mobile_project/components/icon_dialog.dart';
 import 'package:mobile_project/services/login_service.dart';
@@ -15,11 +15,11 @@ class LandingPage extends StatefulWidget {
 }
 
 class _LandingPageState extends State<LandingPage> {
-  late UserController userController;
+  late UserApi userController;
   @override
   void initState() {
     super.initState();
-    userController = UserController();
+    userController = UserApi();
   }
 
   @override

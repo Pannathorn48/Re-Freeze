@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mobile_project/models/dropdownable.dart';
+import 'package:mobile_project/models/dropdownable_model.dart';
 
 class CustomDropdownMenu extends StatelessWidget {
   final void Function(Dropdownable?) onSelected;

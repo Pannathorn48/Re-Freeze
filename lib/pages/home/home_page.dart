@@ -2,7 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mobile_project/api/user_controller.dart';
+import 'package:mobile_project/api/refrigerator_api.dart';
+import 'package:mobile_project/api/user_api.dart';
 import 'package:mobile_project/components/search_text_input.dart';
 import 'package:mobile_project/exceptions/user_exception.dart';
 import 'package:mobile_project/models/user.dart';
@@ -21,7 +22,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late UserController userController;
+  late UserApi userApi;
+  late RefrigeratorApi refrigeratorApi;
   final TextEditingController searchController = TextEditingController();
   final ScrollController _favoriteScrollController = ScrollController();
   String searchText = "";
@@ -35,13 +37,17 @@ class _HomePageState extends State<HomePage> {
 
   Future<PlatformUser> _fetchData() async {
     PlatformUser? user =
-        await userController.getUser(FirebaseAuth.instance.currentUser!.uid)!;
+        await userApi.getUser(FirebaseAuth.instance.currentUser!.uid)!;
+    print("user refrigerators : ${user?.refrigeratorsArray}");
+    final refrigerators = await refrigeratorApi.getRefrigeratorsFromUserId(user!.uid);
+    print(refrigerators);
     return user!;
   }
 
   @override
   void initState() {
-    userController = UserController();
+    userApi = UserApi();
+    refrigeratorApi = RefrigeratorApi();
     _fetchData();
     super.initState();
   }

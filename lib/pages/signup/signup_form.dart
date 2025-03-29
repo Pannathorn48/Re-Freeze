@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_project/components/button.dart';
 import 'package:mobile_project/components/icon_dialog.dart';
 import 'package:mobile_project/components/input_feild.dart';
-import 'package:mobile_project/api/user_controller.dart';
+import 'package:mobile_project/api/user_api.dart';
 import 'package:mobile_project/models/user.dart';
 import 'package:mobile_project/services/custom_theme.dart';
 import 'package:mobile_project/services/login_service.dart';
@@ -19,7 +19,7 @@ class SignUpForm extends StatefulWidget {
 }
 
 class _SignUpFormState extends State<SignUpForm> {
-  final UserController _userDatabase = UserController();
+  final UserApi _userDatabase = UserApi();
   final _formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();

@@ -3,7 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_project/components/custom_float_button.dart';
-import 'package:mobile_project/models/group.dart';
+import 'package:mobile_project/models/group_model.dart';
 import 'package:mobile_project/pages/group/group_card.dart';
 import 'package:mobile_project/services/custom_theme.dart';
 

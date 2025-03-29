@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_project/components/button.dart';
 import 'package:mobile_project/components/input_field_rounded.dart';
-import 'package:mobile_project/models/dropdownable.dart';
-import 'package:mobile_project/models/item.dart';
+import 'package:mobile_project/models/dropdownable_model.dart';
+import 'package:mobile_project/models/item_model.dart';
 import 'package:mobile_project/pages/item-list/date_picker.dart';
 import 'package:mobile_project/pages/item-list/tag_selector.dart';
 

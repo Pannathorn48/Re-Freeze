@@ -3,8 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_project/components/button.dart';
 import 'package:mobile_project/components/custom_dropdown_menu.dart';
 import 'package:mobile_project/components/input_feild.dart';
-import 'package:mobile_project/models/dropdownable.dart';
-import 'package:mobile_project/models/group.dart';
+import 'package:mobile_project/models/dropdownable_model.dart';
+import 'package:mobile_project/models/group_model.dart';
 
 final groupList = <Group>[
   Group(
