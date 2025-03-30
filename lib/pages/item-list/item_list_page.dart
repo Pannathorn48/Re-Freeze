@@ -5,6 +5,7 @@ import 'package:mobile_project/components/custom_float_button.dart';
 import 'package:mobile_project/models/item_model.dart';
 import 'package:mobile_project/models/refrigerators_model.dart';
 import 'package:mobile_project/pages/item-list/dialog/item_factory.dart';
+import 'package:mobile_project/pages/item-list/dialog/item_quantity_edit.dart';
 import 'package:mobile_project/pages/item-list/dialog/tag_filter_dialog.dart';
 import 'package:mobile_project/pages/item-list/item_edit_bottom_sheet.dart';
 import 'package:mobile_project/services/custom_theme.dart';
@@ -205,6 +206,21 @@ class _ItemListPageState extends State<ItemListPage> {
     );
   }
 
+  void _showQuantityEditSheet(Item item) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        return ItemQuantityEditSheet(
+          item: item,
+          onQuantityUpdated: () {
+            _loadItems();
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -393,149 +409,162 @@ class _ItemListPageState extends State<ItemListPage> {
                         itemCount: filteredItems.length,
                         itemBuilder: (BuildContext context, int index) {
                           final item = filteredItems[index];
-                          return Card(
-                            child: SizedBox(
-                              width: double.infinity,
-                              height: 170,
-                              child: Row(
-                                children: [
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  Image.network(
-                                    ImageService.getSignURL(item.imageUrl),
-                                    width: 130,
-                                    height: 130,
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return Image.asset(
-                                        'assets/images/no-image.png',
-                                        width: 130,
-                                        height: 130,
-                                      );
-                                    },
-                                  ),
-                                  const SizedBox(
-                                    width: 20,
-                                  ),
-                                  Expanded(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        RichText(
-                                          text: TextSpan(
-                                            children: [
-                                              TextSpan(
-                                                text: "ชื่อ: ",
-                                                style: GoogleFonts.notoSansThai(
-                                                  fontSize: 20,
-                                                  color: Colors.black,
-                                                ),
-                                              ),
-                                              TextSpan(
-                                                text: item.name,
-                                                style: GoogleFonts.notoSansThai(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.black,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        RichText(
-                                          text: TextSpan(
-                                            children: [
-                                              TextSpan(
-                                                text: "จำนวน ",
-                                                style: GoogleFonts.notoSansThai(
-                                                  fontSize: 15,
-                                                  color: Colors.black,
-                                                ),
-                                              ),
-                                              TextSpan(
-                                                text:
-                                                    "${item.quantity} ${item.unit}",
-                                                style: GoogleFonts.notoSansThai(
-                                                  fontSize: 15,
-                                                  color: Colors.black,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        RichText(
-                                          text: TextSpan(
-                                            children: [
-                                              TextSpan(
-                                                text: "วันหมดอายุ ",
-                                                style: GoogleFonts.notoSansThai(
-                                                  fontSize: 15,
-                                                  color: Colors.black,
-                                                ),
-                                              ),
-                                              TextSpan(
-                                                text: item.expiryDateString,
-                                                style: GoogleFonts.notoSansThai(
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: _getExpiryColor(
-                                                      item.expiryDate),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          height: 30,
-                                          child: ListView(
-                                            scrollDirection: Axis.horizontal,
-                                            children: item.tags
-                                                .map((tag) => Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              right: 5),
-                                                      child: Chip(
-                                                        side: BorderSide(
-                                                            color: tag.color,
-                                                            width: 1),
-                                                        shape: RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        20)),
-                                                        backgroundColor:
-                                                            tag.color,
-                                                        label: Text(
-                                                          tag.name,
-                                                          style: GoogleFonts
-                                                              .notoSansThai(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  fontSize: 12),
-                                                        ),
-                                                      ),
-                                                    ))
-                                                .toList(),
-                                          ),
-                                        ),
-                                      ],
+                          return GestureDetector(
+                            onTap: () {
+                              _showQuantityEditSheet(item);
+                            },
+                            child: Card(
+                              child: SizedBox(
+                                width: double.infinity,
+                                height: 170,
+                                child: Row(
+                                  children: [
+                                    const SizedBox(
+                                      width: 10,
                                     ),
-                                  ),
-                                  Align(
-                                    alignment: Alignment.topRight,
-                                    child: IconButton(
-                                      icon:
-                                          const Icon(Icons.more_horiz_outlined),
-                                      onPressed: () {
-                                        _showEditBottomSheet(item);
+                                    Image.network(
+                                      ImageService.getSignURL(item.imageUrl),
+                                      width: 130,
+                                      height: 130,
+                                      fit: BoxFit.cover,
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                        return Image.asset(
+                                          'assets/images/no-image.png',
+                                          width: 130,
+                                          height: 130,
+                                        );
                                       },
                                     ),
-                                  ),
-                                ],
+                                    const SizedBox(
+                                      width: 20,
+                                    ),
+                                    Expanded(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          RichText(
+                                            text: TextSpan(
+                                              children: [
+                                                TextSpan(
+                                                  text: "ชื่อ: ",
+                                                  style:
+                                                      GoogleFonts.notoSansThai(
+                                                    fontSize: 20,
+                                                    color: Colors.black,
+                                                  ),
+                                                ),
+                                                TextSpan(
+                                                  text: item.name,
+                                                  style:
+                                                      GoogleFonts.notoSansThai(
+                                                    fontSize: 20,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.black,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          RichText(
+                                            text: TextSpan(
+                                              children: [
+                                                TextSpan(
+                                                  text: "จำนวน ",
+                                                  style:
+                                                      GoogleFonts.notoSansThai(
+                                                    fontSize: 15,
+                                                    color: Colors.black,
+                                                  ),
+                                                ),
+                                                TextSpan(
+                                                  text:
+                                                      "${item.quantity} ${item.unit}",
+                                                  style:
+                                                      GoogleFonts.notoSansThai(
+                                                    fontSize: 15,
+                                                    color: Colors.black,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          RichText(
+                                            text: TextSpan(
+                                              children: [
+                                                TextSpan(
+                                                  text: "วันหมดอายุ ",
+                                                  style:
+                                                      GoogleFonts.notoSansThai(
+                                                    fontSize: 15,
+                                                    color: Colors.black,
+                                                  ),
+                                                ),
+                                                TextSpan(
+                                                  text: item.expiryDateString,
+                                                  style:
+                                                      GoogleFonts.notoSansThai(
+                                                    fontSize: 15,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: _getExpiryColor(
+                                                        item.expiryDate),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: 30,
+                                            child: ListView(
+                                              scrollDirection: Axis.horizontal,
+                                              children: item.tags
+                                                  .map((tag) => Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(right: 5),
+                                                        child: Chip(
+                                                          side: BorderSide(
+                                                              color: tag.color,
+                                                              width: 1),
+                                                          shape: RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          20)),
+                                                          backgroundColor:
+                                                              tag.color,
+                                                          label: Text(
+                                                            tag.name,
+                                                            style: GoogleFonts
+                                                                .notoSansThai(
+                                                                    color: Colors
+                                                                        .white,
+                                                                    fontSize:
+                                                                        12),
+                                                          ),
+                                                        ),
+                                                      ))
+                                                  .toList(),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Align(
+                                      alignment: Alignment.topRight,
+                                      child: IconButton(
+                                        icon: const Icon(
+                                            Icons.more_horiz_outlined),
+                                        onPressed: () {
+                                          _showEditBottomSheet(item);
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           );

@@ -312,7 +312,10 @@ class _HomePageState extends State<HomePage> {
                                                 .secondary,
                                           ),
                                           title: "เหลือน้อย",
-                                          onPressed: () {}),
+                                          onPressed: () {
+                                            Navigator.pushNamed(
+                                                context, "/low-quantity");
+                                          }),
                                       _buildCategoryIcon(
                                           icon: Icon(
                                             Icons.add,

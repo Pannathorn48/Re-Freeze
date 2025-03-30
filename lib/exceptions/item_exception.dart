@@ -14,5 +14,7 @@ class ItemException extends AppException {
   static const String getWarningItemsException = 'get-warning-items-error';
   static const String getExpiredItemsException = 'get-expired-items-error';
 
+  static const String getLowQuantityItemsException = 'get-low-quantity-items-error';
+
   ItemException(super.message, super.code);
 }

@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:mobile_project/pages/item-list/item_list_page.dart';
 import 'package:mobile_project/pages/landing/landing_page.dart';
 import 'package:mobile_project/pages/login/login_page.dart';
+import 'package:mobile_project/pages/low-quantity/low_quantity_page.dart';
 import 'package:mobile_project/pages/refrigerators/refrigerators_page.dart';
 import 'package:mobile_project/pages/signup/signup_page.dart';
 import 'package:mobile_project/pages/signup/signup_display_name_page.dart';
@@ -75,4 +76,5 @@ Map<String, Widget Function(BuildContext)> pagesRoutes = {
   '/item-list': (context) => const ItemListPage(),
   //refrigerators
   '/refrigerators': (context) => const RefrigeratorsPage(),
+  '/low-quantity': (context) => const LowQuantityScreen(),
 };

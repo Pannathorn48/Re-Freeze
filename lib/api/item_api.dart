@@ -18,7 +18,6 @@ class ItemApi {
         _auth = auth ?? FirebaseAuth.instance;
 
   CollectionReference get _items => _firestore.collection('items');
-  CollectionReference get _itemPresets => _firestore.collection('item_presets');
 
   /// Get items for a specific refrigerator
   Stream<List<Item>> getItemsForRefrigerator(String refrigeratorId) {
@@ -315,7 +314,7 @@ class ItemApi {
   }
   // Add these methods to your ItemApi class in item_api.dart
 
- /// Get all items that have reached their warning date (today equals warning date)
+  /// Get all items that have reached their warning date (today equals warning date)
   Future<List<Item>> getWarningItems(String userId) async {
     try {
       // Get all refrigerators this user has access to
@@ -462,6 +461,46 @@ class ItemApi {
     } catch (e) {
       throw AppException('Error getting refrigerators with notifications: $e',
           ItemException.getNotificationsException);
+    }
+  }
+
+  Future<List<Item>> getLowQuantityItems(String userId,
+      {int minQuantity = 5}) async {
+    try {
+      // Get all refrigerators this user has access to
+      final refrigeratorsSnapshot = await _firestore
+          .collection('refrigerators')
+          .where('users', arrayContains: userId)
+          .get();
+
+      final refrigeratorIds =
+          refrigeratorsSnapshot.docs.map((doc) => doc.id).toList();
+
+      if (refrigeratorIds.isEmpty) return [];
+
+      final lowQuantityItems = <Item>[];
+
+      // Split refrigeratorIds into batches if needed (Firestore limit)
+      final batches = _chunkList(refrigeratorIds, 10);
+
+      for (final batch in batches) {
+        // Query all items for these refrigerators
+        final itemsQuery =
+            await _items.where('refrigeratorId', whereIn: batch).get();
+
+        // Filter locally for low quantity
+        for (final doc in itemsQuery.docs) {
+          final data = doc.data() as Map<String, dynamic>;
+          if (data['quantity'] != null && data['quantity'] <= minQuantity) {
+            lowQuantityItems.add(Item.fromJSON(data));
+          }
+        }
+      }
+
+      return lowQuantityItems;
+    } catch (e) {
+      throw AppException('Error getting low quantity items: $e',
+          ItemException.getLowQuantityItemsException);
     }
   }
 }

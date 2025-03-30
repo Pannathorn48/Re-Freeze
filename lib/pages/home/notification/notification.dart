@@ -18,6 +18,7 @@ class _NotificationWidgetState extends State<NotificationWidget> {
   int warningCount = 0;
   bool _isLoading = true;
   String? _errorMessage;
+  bool _disposed = false;
 
   @override
   void initState() {
@@ -25,8 +26,23 @@ class _NotificationWidgetState extends State<NotificationWidget> {
     _loadNotifications();
   }
 
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
+  }
+
+  // Safe setState that checks if widget is still mounted
+  void _safeSetState(VoidCallback fn) {
+    if (!_disposed && mounted) {
+      setState(fn);
+    }
+  }
+
   Future<void> _loadNotifications() async {
-    setState(() {
+    if (_disposed) return;
+
+    _safeSetState(() {
       _isLoading = true;
       _errorMessage = null;
     });
@@ -34,7 +50,7 @@ class _NotificationWidgetState extends State<NotificationWidget> {
     try {
       final user = FirebaseAuth.instance.currentUser;
       if (user == null) {
-        setState(() {
+        _safeSetState(() {
           _isLoading = false;
           _errorMessage = "ไม่พบข้อมูลผู้ใช้";
         });
@@ -45,15 +61,20 @@ class _NotificationWidgetState extends State<NotificationWidget> {
       final expiredItems = await _itemApi.getExpiredItems(user.uid);
       final warningItems = await _itemApi.getWarningItems(user.uid);
 
+      // Check if widget is still mounted before updating state
+      if (!mounted || _disposed) return;
+
       // Update state with counts
-      setState(() {
+      _safeSetState(() {
         expiredCount = expiredItems.length;
         warningCount = warningItems.length;
         _isLoading = false;
       });
     } catch (e) {
       print(e);
-      setState(() {
+      if (!mounted || _disposed) return;
+
+      _safeSetState(() {
         _isLoading = false;
         _errorMessage = "เกิดข้อผิดพลาดในการโหลดข้อมูล";
       });
@@ -78,14 +99,41 @@ class _NotificationWidgetState extends State<NotificationWidget> {
     );
   }
 
+  void _navigateToAllItems() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ItemListScreen(type: ItemListType.all),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final totalCount = expiredCount + warningCount;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Text("notification",
-            style: GoogleFonts.notoSansThai(color: CustomColors.grey)),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text("notification",
+                style: GoogleFonts.notoSansThai(color: CustomColors.grey)),
+            if (totalCount > 0)
+              TextButton(
+                onPressed: _navigateToAllItems,
+                child: Text(
+                  "ดูทั้งหมด",
+                  style: GoogleFonts.notoSansThai(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+          ],
+        ),
         Divider(
           color: CustomColors.grey,
         ),
