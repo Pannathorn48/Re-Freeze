@@ -161,7 +161,6 @@ class _RefrigeratorsPageState extends State<RefrigeratorsPage> {
         showDialog(
             context: context,
             builder: (context) => AddRefrigeratorDialog(
-                  // Pass the group ID if we're filtering by group
                   initialGroupId: _filterByGroup ? _filterGroupId : null,
                 ));
       }),
@@ -354,9 +353,12 @@ class _RefrigeratorsPageState extends State<RefrigeratorsPage> {
                                 if (mounted) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                        content: Text(isFavorite
-                                            ? 'ไม่สามารถลบออกจากรายการโปรดได้: $e'
-                                            : 'ไม่สามารถเพิ่มในรายการโปรดได้: $e' , style: GoogleFonts.notoSansThai(),)),
+                                        content: Text(
+                                      isFavorite
+                                          ? 'ไม่สามารถลบออกจากรายการโปรดได้: $e'
+                                          : 'ไม่สามารถเพิ่มในรายการโปรดได้: $e',
+                                      style: GoogleFonts.notoSansThai(),
+                                    )),
                                   );
                                 }
                               } finally {

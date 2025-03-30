@@ -89,7 +89,10 @@ class _LoginFormState extends State<LoginForm> {
                     if (exist?.displayName == null) {
                       Navigator.pushNamed(context, "/signup/display-name");
                     } else {
-                      Navigator.pushNamed(context, '/home');
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                        '/home',
+                        (Route<dynamic> route) => false,
+                      );
                     }
                   } on FirebaseAuthException catch (e) {
                     switch (e.code) {
@@ -150,7 +153,10 @@ class _LoginFormState extends State<LoginForm> {
                     Navigator.pushNamed(context, "/signup/display-name");
                   } else {
                     if (mounted) {
-                      Navigator.pushNamed(context, '/home');
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                        '/home',
+                        (Route<dynamic> route) => false,
+                      );
                     }
                   }
                 } catch (error) {

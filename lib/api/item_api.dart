@@ -70,7 +70,11 @@ class ItemApi {
 
       // Convert tags to format for storage
       final List<Map<String, dynamic>> tagData = tags
-          .map((tag) => {'uid': tag.uid, 'name': tag.name, 'color': tag.color})
+          .map((tag) => {
+                'uid': tag.uid,
+                'name': tag.name,
+                'color': tag.color.toHexString()
+              })
           .toList();
 
       // Prepare data to save
@@ -130,7 +134,6 @@ class ItemApi {
       }
 
       final presetData = presetDoc.data() as Map<String, dynamic>;
-      print('Retrieved preset: ${presetData['name']}');
 
       // Create a new document reference
       final docRef = _items.doc();
@@ -139,34 +142,24 @@ class ItemApi {
       List<Tag> tags = [];
       if (presetData['tags'] != null && presetData['tags'] is List) {
         final tagList = presetData['tags'] as List<dynamic>;
-        print('Found ${tagList.length} tags in preset data');
-
         for (var tagData in tagList) {
           if (tagData is Map<String, dynamic>) {
             try {
               final tag = Tag.fromJSON(tagData);
-              print(
-                  'Parsed tag: ${tag.name} with color ${tag.color.toHexString()}');
               tags.add(tag);
-            } catch (e) {
-              print('Error parsing tag: $e');
-            }
+            } catch (e) {}
           }
         }
-      } else {
-        print('No tags found in preset data');
-      }
+      } else {}
 
       // Convert tags to format for storage
       final List<Map<String, dynamic>> tagData = tags
           .map((tag) => {
                 'uid': tag.uid,
                 'name': tag.name,
-                'color': tag.color.toHexString().replaceAll('#', ''),
+                'color': tag.color.toHexString(),
               })
           .toList();
-
-      print('Converted ${tagData.length} tags for storage');
 
       // Use custom values or defaults from preset
       final expiryDate =
@@ -193,7 +186,6 @@ class ItemApi {
 
       // Save to Firestore
       await docRef.set(itemData);
-      print('Item created with ${tagData.length} tags');
 
       // Create and return the item object
       return Item(
@@ -208,7 +200,6 @@ class ItemApi {
         tags: tags,
       );
     } catch (e) {
-      print('Error creating item from preset: $e');
       throw AppException('Error creating item from preset: $e',
           ItemException.createItemFromPresetException);
     }

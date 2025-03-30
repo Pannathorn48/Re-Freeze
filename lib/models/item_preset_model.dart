@@ -57,13 +57,10 @@ class ItemPreset {
       return tagData.map((tag) {
         try {
           if (tag is Map<String, dynamic>) {
-            print('Processing tag: ${tag.toString()}');
-            // Check if tag has all required fields
             if (tag.containsKey('uid') &&
                 tag.containsKey('name') &&
                 tag.containsKey('color')) {
               final colorString = tag['color'] as String;
-              print('Color string: $colorString');
 
               // Handle color parsing
               Color parsedColor;
@@ -77,7 +74,6 @@ class ItemPreset {
                 }
                 parsedColor = Color(int.parse(hexColor.replaceAll('#', '')));
               } catch (e) {
-                print('Error parsing color $colorString: $e');
                 parsedColor = const Color(0xFF000000); // Default black
               }
 

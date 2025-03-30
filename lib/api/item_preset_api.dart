@@ -49,10 +49,6 @@ class ItemPresetApi {
           .toList();
 
       // Print debug information
-      print('Creating item preset with ${tagData.length} tags');
-      for (var tag in tagData) {
-        print('Tag: ${tag['name']}, Color: ${tag['color']}');
-      }
 
       await docRef.set({
         'uid': docRef.id,
@@ -84,25 +80,11 @@ class ItemPresetApi {
   Future<List<ItemPreset>> getAllPresets() async {
     try {
       final snapshot = await _itemPresets.get();
-
-      // Debug information
-      print('Found ${snapshot.docs.length} presets in Firestore');
-
       return snapshot.docs.map((doc) {
         final data = doc.data() as Map<String, dynamic>;
-
-        // Debug tag information
-        if (data['tags'] != null) {
-          final tags = data['tags'] as List<dynamic>;
-          print('Preset ${data['name']} has ${tags.length} tags');
-        } else {
-          print('Preset ${data['name']} has no tags');
-        }
-
         return ItemPreset.fromJSON(data);
       }).toList();
     } catch (e) {
-      print('Error fetching item presets: $e');
       throw Exception('Failed to fetch item presets: $e');
     }
   }

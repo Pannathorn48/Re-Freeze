@@ -58,9 +58,11 @@ class _LandingPageState extends State<LandingPage> {
                     final userCred = await GoogleAuth.signInWithGoogle();
                     final exist =
                         await userController.getUser(userCred.user!.uid);
-                    print(exist?.displayName ?? "null");
                     if (exist != null && exist.displayName != null) {
-                      Navigator.pushReplacementNamed(context, "/home");
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                        '/home',
+                        (Route<dynamic> route) => false,
+                      );
                     } else {
                       Navigator.pushNamed(
                         context,

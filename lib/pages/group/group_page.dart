@@ -158,7 +158,10 @@ class _GroupPageState extends State<GroupPage> {
                   _refreshGroups();
                 }
               },
-              icon: const Icon(Icons.add),
+              icon: const Icon(
+                Icons.add,
+                color: Colors.white,
+              ),
               label: Text(
                 "สร้างหรือเข้าร่วมกลุ่ม",
                 style: GoogleFonts.notoSansThai(),

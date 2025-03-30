@@ -102,7 +102,10 @@ class _SignUpFormState extends State<SignUpForm> {
                         Navigator.pushNamed(context, "/signup/display-name");
                       } else {
                         if (mounted) {
-                          Navigator.pushNamed(context, '/home');
+                          Navigator.of(context).pushNamedAndRemoveUntil(
+                            '/home',
+                            (Route<dynamic> route) => false,
+                          );
                         }
                       }
                     }
