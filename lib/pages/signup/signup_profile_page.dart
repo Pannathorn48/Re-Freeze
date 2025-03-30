@@ -125,7 +125,10 @@ class _SignupProfilePageState extends State<SignupProfilePage> {
       floatingActionButton: !isSelected
           ? Button(
               onPressed: () {
-                Navigator.pushNamed(context, "/home");
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  '/home',
+                  (Route<dynamic> route) => false,
+                );
               },
               text: "ข้าม",
               width: 150,
@@ -138,7 +141,7 @@ class _SignupProfilePageState extends State<SignupProfilePage> {
                 try {
                   String fileExtension = path.extension(image!.path);
 
-                 String storagePath =
+                  String storagePath =
                       '/profile/${FirebaseAuth.instance.currentUser!.uid}$fileExtension';
 
                   String fullPath = await Supabase.instance.client.storage
@@ -148,7 +151,10 @@ class _SignupProfilePageState extends State<SignupProfilePage> {
                   await userController.updateProfilePicture(
                       FirebaseAuth.instance.currentUser!.uid, fullPath);
 
-                  Navigator.pushNamed(context, "/home");
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    '/home',
+                    (Route<dynamic> route) => false,
+                  );
                 } catch (e) {
                   debugPrint(e.toString());
                   showDialog(

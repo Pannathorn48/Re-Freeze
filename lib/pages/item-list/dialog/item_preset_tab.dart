@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_project/api/item_preset_api.dart';
 import 'package:mobile_project/components/button.dart';
 import 'package:mobile_project/models/item_preset_model.dart';
+import 'package:mobile_project/services/image_service.dart';
 
 class ItemPresetTab extends StatefulWidget {
   final Function(ItemPreset) onPresetSelected;
@@ -134,7 +135,8 @@ class _ItemPresetTabState extends State<ItemPresetTab> {
                                 ),
                                 child: preset.imageUrl.isNotEmpty
                                     ? Image.network(
-                                        preset.imageUrl,
+                                        ImageService.getSignURL(
+                                            preset.imageUrl),
                                         fit: BoxFit.cover,
                                         errorBuilder: (context, _, __) =>
                                             Image.asset(
@@ -213,7 +215,7 @@ class _ItemPresetTabState extends State<ItemPresetTab> {
                   ),
                   Button(
                     onPressed: () => widget.onAddItem(widget.selectedPreset!),
-                    text: "เพิ่มสินค้า",
+                    text: "เพิ่มรายการ",
                     width: 150,
                     height: 40,
                     fontColor: Colors.white,

@@ -105,6 +105,27 @@ class RefrigeratorApi {
       // Create a new document reference
       final docRef = _refrigerators.doc();
 
+      // Initialize users array with current user
+      List<String> users = [currentUser.uid];
+
+      // If refrigerator is associated with a group and is public, add all group members
+      if (isPublic && groupId != null && groupId.isNotEmpty) {
+        // Get all members of the group
+        final groupMembersQuery = await _firestore
+            .collection('group_members')
+            .where('groupId', isEqualTo: groupId)
+            .get();
+
+        // Add each group member to the users array
+        for (final doc in groupMembersQuery.docs) {
+          final memberData = doc.data();
+          final userId = memberData['userId'] as String;
+          if (!users.contains(userId)) {
+            users.add(userId);
+          }
+        }
+      }
+
       // Prepare data to save
       final refrigeratorData = {
         'uid': docRef.id,
@@ -115,7 +136,7 @@ class RefrigeratorApi {
         'createdAt': FieldValue.serverTimestamp(),
         'createdBy': currentUser.uid,
         'ownerId': currentUser.uid,
-        'users': [currentUser.uid], // Initialize with current user
+        'users': users, // Use the users array with all relevant members
       };
 
       // Save to Firestore
@@ -128,6 +149,9 @@ class RefrigeratorApi {
         groupId: groupId ?? "",
         imageUrl: imageUrl,
         isPrivate: !isPublic,
+        users: users,
+        ownerId: currentUser.uid,
+        createdBy: currentUser.uid,
       );
     } catch (e) {
       throw AppException('Error creating refrigerator: $e',
@@ -135,7 +159,99 @@ class RefrigeratorApi {
     }
   }
 
-  /// Add refrigerator to user's favorites
+  /// Update an existing refrigerator
+  Future<void> updateRefrigerator({
+    required String refrigeratorId,
+    required String name,
+    required bool isPublic,
+    String? imageUrl,
+    String? groupId,
+  }) async {
+    try {
+      final currentUser = _auth.currentUser;
+      if (currentUser == null) {
+        throw UserException(
+            "No user logged in", UserException.getUserException);
+      }
+
+      // Get the current refrigerator data to check if group is changing
+      final currentDoc = await _refrigerators.doc(refrigeratorId).get();
+      final currentData = currentDoc.data() as Map<String, dynamic>;
+      final String currentGroupId = currentData['groupId'] ?? "";
+      final String ownerId = currentData['ownerId'] ?? currentUser.uid;
+      final bool wasPublic = !(currentData['isPrivate'] ?? false);
+
+      // Prepare data to update
+      final Map<String, dynamic> data = {
+        'name': name,
+        'isPrivate': !isPublic, // Note: inverting isPublic to match the schema
+        'updatedAt': FieldValue.serverTimestamp(),
+      };
+
+      // Add optional fields if they're provided
+      if (imageUrl != null) {
+        data['imageUrl'] = imageUrl;
+      }
+
+      // Handle users access changes
+      // Case 1: Refrigerator is now private - only owner should have access
+      if (!isPublic) {
+        // Ensure only the owner has access
+        data['users'] = [ownerId];
+        // Clear group association for private refrigerators
+        data['groupId'] = "";
+      }
+      // Case 2: Refrigerator is public and associated with a group
+      else if (isPublic && groupId != null && groupId.isNotEmpty) {
+        data['groupId'] = groupId;
+
+        // If status changed from private to public OR group is changing, update users
+        if (!wasPublic || groupId != currentGroupId) {
+          // Get all members of the group
+          final groupMembersQuery = await _firestore
+              .collection('group_members')
+              .where('groupId', isEqualTo: groupId)
+              .get();
+
+          // Extract user IDs
+          final List<String> groupUserIds = [];
+          for (final doc in groupMembersQuery.docs) {
+            final memberData = doc.data();
+            final userId = memberData['userId'] as String;
+            groupUserIds.add(userId);
+          }
+
+          // Make sure owner is included
+          if (!groupUserIds.contains(ownerId)) {
+            groupUserIds.add(ownerId);
+          }
+
+          // Update the users array with all group members
+          data['users'] = groupUserIds;
+        }
+      }
+      // Case 3: Refrigerator is public but not associated with any group
+      else {
+        // Not associated with a group
+        data['groupId'] = "";
+
+        // If changing from private to public with no group, only owner has access
+        if (!wasPublic) {
+          data['users'] = [ownerId];
+        }
+        // If changing from group to no group while remaining public, keep only owner
+        else if (currentGroupId.isNotEmpty) {
+          data['users'] = [ownerId];
+        }
+      }
+
+      await _refrigerators.doc(refrigeratorId).update(data);
+    } catch (e) {
+      throw AppException('Error updating refrigerator: $e',
+          RefrigeratorException.updateRefrigeratorException);
+    }
+  }
+
   Future<void> addToFavorites(String refrigeratorId) async {
     try {
       final currentUser = _auth.currentUser;

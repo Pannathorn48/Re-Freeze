@@ -13,7 +13,9 @@ import 'package:mobile_project/api/group_api.dart';
 import 'package:mobile_project/services/image_service.dart';
 
 class AddRefrigeratorDialog extends StatefulWidget {
-  const AddRefrigeratorDialog({super.key});
+  final String? initialGroupId;
+
+  const AddRefrigeratorDialog({super.key, this.initialGroupId});
 
   @override
   State<AddRefrigeratorDialog> createState() => _AddRefrigeratorDialogState();
@@ -36,6 +38,30 @@ class _AddRefrigeratorDialogState extends State<AddRefrigeratorDialog> {
   @override
   void initState() {
     super.initState();
+    // If initialGroupId is provided, automatically select public and load groups
+    if (widget.initialGroupId != null) {
+      _isSelected = true;
+      _loadGroups().then((_) {
+        // Find and select the initial group after groups are loaded
+        if (_groupList != null && widget.initialGroupId != null) {
+          _selectInitialGroup();
+        }
+      });
+    }
+  }
+
+  // Helper method to find and select the initial group
+  void _selectInitialGroup() {
+    if (_groupList == null || widget.initialGroupId == null) return;
+
+    for (var group in _groupList!) {
+      if (group.uid == widget.initialGroupId) {
+        setState(() {
+          _selectedGroup = group;
+        });
+        break;
+      }
+    }
   }
 
   Future<void> _loadGroups() async {
@@ -48,15 +74,24 @@ class _AddRefrigeratorDialogState extends State<AddRefrigeratorDialog> {
 
     try {
       final groups = await _groupApi.getUserGroups();
-      setState(() {
-        _groupList = groups;
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _groupList = groups;
+          _isLoading = false;
+
+          // Try to find and select the initial group if provided
+          if (widget.initialGroupId != null) {
+            _selectInitialGroup();
+          }
+        });
+      }
     } catch (e) {
-      setState(() {
-        _errorMessage = e.toString();
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _errorMessage = e.toString();
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -67,255 +102,258 @@ class _AddRefrigeratorDialogState extends State<AddRefrigeratorDialog> {
     }
 
     return Dialog(
-        child: AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-      width: MediaQuery.of(context).size.width * 0.95,
-      height: _isSelected
-          ? MediaQuery.of(context).size.height * 0.75
-          : MediaQuery.of(context).size.height * 0.6,
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: Colors.grey[100],
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const IconButton(
-                    onPressed: null,
-                    icon: Icon(
-                      Icons.close,
-                      color: Colors.transparent,
-                    )),
-                Text(
-                  "สร้างตู้เย็น",
-                  style: GoogleFonts.notoSansThai(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontSize: 25,
-                      fontWeight: FontWeight.bold),
-                ),
-                IconButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    icon: const Icon(Icons.close))
-              ],
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            ClipOval(
-              child: image == null
-                  ? Image.asset(
-                      "assets/images/no-image.png",
-                      width: 150,
-                      height: 150,
-                      fit: BoxFit.cover,
-                    )
-                  : Image.file(
-                      image!,
-                      width: 150,
-                      height: 150,
-                      fit: BoxFit.cover,
-                    ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(context).colorScheme.primary,
-                overlayColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-              ),
-              onPressed: () async {
-                XFile? selectedImage = await _imagePicker.pickImage(
-                  source: ImageSource.gallery,
-                  imageQuality: 50,
-                );
-                if (selectedImage != null) {
-                  setState(() {
-                    image = File(selectedImage.path);
-                  });
-                }
-              },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Text(
-                  "เลือกรูป",
-                  style: GoogleFonts.notoSansThai(color: Colors.white),
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Form(
-              key: _formKey,
-              child: InputFeild(
-                  label: "ชื่อตู้เย็น",
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "กรุณากรอกชื่อ";
-                    }
-                    return null;
-                  },
-                  hintText: "",
-                  controller: _nameTextController),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        width: MediaQuery.of(context).size.width * 0.95,
+        height: _isSelected
+            ? MediaQuery.of(context).size.height * 0.75
+            : MediaQuery.of(context).size.height * 0.6,
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: Colors.grey[100],
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  const IconButton(
+                      onPressed: null,
+                      icon: Icon(
+                        Icons.close,
+                        color: Colors.transparent,
+                      )),
                   Text(
-                    "public:",
-                    style: GoogleFonts.notoSansThai(fontSize: 15),
+                    "สร้างตู้เย็น",
+                    style: GoogleFonts.notoSansThai(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold),
                   ),
-                  Switch(
-                      value: _isSelected,
-                      inactiveThumbColor: Theme.of(context).colorScheme.primary,
-                      activeTrackColor: Theme.of(context).colorScheme.primary,
-                      activeColor: Colors.white,
-                      onChanged: (value) {
-                        setState(() {
-                          _isSelected = value;
-                        });
-                      })
+                  IconButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      icon: const Icon(Icons.close))
                 ],
               ),
-            ),
-            // Wrap the conditional content in AnimatedSwitcher for smooth appearing/disappearing
-            AnimatedSwitcher(
-              duration: const Duration(milliseconds: 300),
-              transitionBuilder: (Widget child, Animation<double> animation) {
-                return FadeTransition(
-                  opacity: animation,
-                  child: SizeTransition(
-                    sizeFactor: animation,
-                    child: child,
-                  ),
-                );
-              },
-              child: _isSelected
-                  ? Padding(
-                      key: const ValueKey('selected'),
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "เลือกกลุ่มที่ต้องการจะให้เห็นตู้เย็นนี้",
-                            style: GoogleFonts.notoSansThai(fontSize: 15),
-                          ),
-                          const SizedBox(
-                            height: 15,
-                          ),
-                          // Use conditional rendering based on loading state
-                          _buildGroupSelector(),
-                          const SizedBox(
-                            height: 40,
-                          ),
-                        ],
+              const SizedBox(
+                height: 10,
+              ),
+              ClipOval(
+                child: image == null
+                    ? Image.asset(
+                        "assets/images/no-image.png",
+                        width: 150,
+                        height: 150,
+                        fit: BoxFit.cover,
+                      )
+                    : Image.file(
+                        image!,
+                        width: 150,
+                        height: 150,
+                        fit: BoxFit.cover,
                       ),
-                    )
-                  : const SizedBox(
-                      key: ValueKey('not-selected'),
-                      height: 20,
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                ),
+                onPressed: () async {
+                  XFile? selectedImage = await _imagePicker.pickImage(
+                    source: ImageSource.gallery,
+                    imageQuality: 50,
+                  );
+                  if (selectedImage != null) {
+                    setState(() {
+                      image = File(selectedImage.path);
+                    });
+                  }
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Text(
+                    "เลือกรูป",
+                    style: GoogleFonts.notoSansThai(color: Colors.white),
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Form(
+                key: _formKey,
+                child: InputFeild(
+                    label: "ชื่อตู้เย็น",
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "กรุณากรอกชื่อ";
+                      }
+                      return null;
+                    },
+                    hintText: "",
+                    controller: _nameTextController),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "public:",
+                      style: GoogleFonts.notoSansThai(fontSize: 15),
                     ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Button(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    text: "ยกเลิก",
-                    width: 150,
-                    height: 30,
-                    fontColor: Colors.white,
-                    overlayColor: Colors.white,
-                    backgroundColor: Colors.redAccent),
-                Button(
-                    onPressed: () async {
-                      if (_formKey.currentState?.validate() != true) {
-                      return;
-                      }
-                      if (_isSelected && _selectedGroup == null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                        content: Text(
-                          "กรุณาเลือกกลุ่ม",
-                          style: GoogleFonts.notoSansThai(),
-                        ),
-                        ),
-                      );
-                      return;
-                      }
-                      if (image == null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                        content: Text(
-                          "กรุณาเลือกรูป",
-                          style: GoogleFonts.notoSansThai(),
-                        ),
-                        ),
-                      );
-                      return;
-                      }
-
-                      try {
-                        final fullPath = await ImageService.uploadImage(
-                            image!.path, "refrigerators");
-                        await _refrigeratorApi.addRefrigerators(
-                          name: _nameTextController.text,
-                          isPublic: _isSelected,
-                          imageUrl: fullPath,
-                          groupId: _isSelected ? _selectedGroup?.uid : null,
-                        );
-
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              "เพิ่มตู้เย็นสำเร็จ",
-                              style: GoogleFonts.notoSansThai(),
+                    Switch(
+                        value: _isSelected,
+                        inactiveThumbColor:
+                            Theme.of(context).colorScheme.primary,
+                        activeTrackColor: Theme.of(context).colorScheme.primary,
+                        activeColor: Colors.white,
+                        onChanged: (value) {
+                          setState(() {
+                            _isSelected = value;
+                          });
+                        })
+                  ],
+                ),
+              ),
+              // Wrap the conditional content in AnimatedSwitcher for smooth appearing/disappearing
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 300),
+                transitionBuilder: (Widget child, Animation<double> animation) {
+                  return FadeTransition(
+                    opacity: animation,
+                    child: SizeTransition(
+                      sizeFactor: animation,
+                      child: child,
+                    ),
+                  );
+                },
+                child: _isSelected
+                    ? Padding(
+                        key: const ValueKey('selected'),
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "เลือกกลุ่มที่ต้องการจะให้เห็นตู้เย็นนี้",
+                              style: GoogleFonts.notoSansThai(fontSize: 15),
                             ),
-                          ),
-                        );
-                      } catch (error) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              "เกิดข้อผิดพลาด: $error",
-                              style: GoogleFonts.notoSansThai(),
+                            const SizedBox(
+                              height: 15,
                             ),
-                          ),
-                        );
-                      }
+                            // Use conditional rendering based on loading state
+                            _buildGroupSelector(),
+                            const SizedBox(
+                              height: 40,
+                            ),
+                          ],
+                        ),
+                      )
+                    : const SizedBox(
+                        key: ValueKey('not-selected'),
+                        height: 20,
+                      ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Button(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      text: "ยกเลิก",
+                      width: 150,
+                      height: 30,
+                      fontColor: Colors.white,
+                      overlayColor: Colors.white,
+                      backgroundColor: Colors.redAccent),
+                  Button(
+                      onPressed: () async {
+                        if (_formKey.currentState?.validate() != true) {
+                          return;
+                        }
+                        if (_isSelected && _selectedGroup == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                "กรุณาเลือกกลุ่ม",
+                                style: GoogleFonts.notoSansThai(),
+                              ),
+                            ),
+                          );
+                          return;
+                        }
+                        if (image == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                "กรุณาเลือกรูป",
+                                style: GoogleFonts.notoSansThai(),
+                              ),
+                            ),
+                          );
+                          return;
+                        }
 
-                      Navigator.of(context).pop();
-                    },
-                    text: "ตกลง",
-                    width: 150,
-                    height: 30,
-                    fontColor: Colors.white,
-                    overlayColor: Colors.white,
-                    backgroundColor: Theme.of(context).colorScheme.primary),
-              ],
-            )
-          ],
+                        try {
+                          final fullPath = await ImageService.uploadImage(
+                              image!.path, "refrigerators");
+                          await _refrigeratorApi.addRefrigerators(
+                            name: _nameTextController.text,
+                            isPublic: _isSelected,
+                            imageUrl: fullPath,
+                            groupId: _isSelected ? _selectedGroup?.uid : null,
+                          );
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                "เพิ่มตู้เย็นสำเร็จ",
+                                style: GoogleFonts.notoSansThai(),
+                              ),
+                            ),
+                          );
+                        } catch (error) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                "เกิดข้อผิดพลาด: $error",
+                                style: GoogleFonts.notoSansThai(),
+                              ),
+                            ),
+                          );
+                        }
+
+                        Navigator.of(context).pop(
+                            true); // Return true to indicate refresh needed
+                      },
+                      text: "ตกลง",
+                      width: 150,
+                      height: 30,
+                      fontColor: Colors.white,
+                      overlayColor: Colors.white,
+                      backgroundColor: Theme.of(context).colorScheme.primary),
+                ],
+              )
+            ],
+          ),
         ),
       ),
-    ));
+    );
   }
 
   // Separated widget for the group selector to make the code cleaner
@@ -340,6 +378,7 @@ class _AddRefrigeratorDialogState extends State<AddRefrigeratorDialog> {
 
     return CustomDropdownMenu(
       width: 300,
+      initial: _selectedGroup, // Use the selected group if already set
       onSelected: (Dropdownable? item) {
         if (item is Group) {
           setState(() {

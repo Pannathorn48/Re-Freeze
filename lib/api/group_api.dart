@@ -163,7 +163,6 @@ class GroupApi {
     }
   }
 
-  /// Add a user to a group
   Future<void> addUserToGroup(String groupId, String userId,
       {String role = 'member'}) async {
     try {
@@ -174,7 +173,6 @@ class GroupApi {
           .get();
 
       if (existingMember.docs.isNotEmpty) {
-        // User is already a member, nothing to do
         return;
       }
 
@@ -190,13 +188,30 @@ class GroupApi {
       await _groups
           .doc(groupId)
           .update({'memberCount': FieldValue.increment(1)});
+
+      final refrigeratorsQuery = await _firestore
+          .collection('refrigerators')
+          .where('groupId', isEqualTo: groupId)
+          .where('isPrivate',
+              isEqualTo: false) // Only add to public refrigerators
+          .get();
+
+      final batch = _firestore.batch();
+      for (final doc in refrigeratorsQuery.docs) {
+        batch.update(doc.reference, {
+          'users': FieldValue.arrayUnion([userId])
+        });
+      }
+
+      // Commit all the refrigerator updates
+      await batch.commit();
     } catch (e) {
       throw AppException('Failed to add user to group: $e',
           GroupException.addUserToGroupException);
     }
   }
 
-  /// Remove a user from a group
+  /// Remove a user from a group and all associated refrigerators
   Future<void> removeUserFromGroup(String groupId, String userId) async {
     try {
       // Find the membership document
@@ -226,6 +241,30 @@ class GroupApi {
       await _groups
           .doc(groupId)
           .update({'memberCount': FieldValue.increment(-1)});
+
+      // Find all refrigerators associated with this group
+      final refrigeratorsQuery = await _firestore
+          .collection('refrigerators')
+          .where('groupId', isEqualTo: groupId)
+          .where('isPrivate',
+              isEqualTo: false) // Only remove from public refrigerators
+          .get();
+
+      // Make sure not to remove user from refrigerators they own
+      final batch = _firestore.batch();
+      for (final doc in refrigeratorsQuery.docs) {
+        final data = doc.data();
+
+        // Don't remove users from refrigerators they own
+        if (data['ownerId'] != userId) {
+          batch.update(doc.reference, {
+            'users': FieldValue.arrayRemove([userId])
+          });
+        }
+      }
+
+      // Commit all the refrigerator updates
+      await batch.commit();
     } catch (e) {
       throw AppException('Failed to remove user from group: $e',
           GroupException.removeUserFromGroupException);

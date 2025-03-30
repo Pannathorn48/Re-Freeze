@@ -125,8 +125,9 @@ class ItemApi {
             "No user logged in", UserException.getUserException);
       }
 
-      // Get the preset
-      final presetDoc = await _itemPresets.doc(presetId).get();
+      // Get the preset from the item_presets collection, not from items
+      final presetDoc =
+          await _firestore.collection('item_presets').doc(presetId).get();
       if (!presetDoc.exists) {
         throw AppException(
             'Item preset not found', ItemException.presetNotFoundException);
@@ -137,19 +138,19 @@ class ItemApi {
       // Create a new document reference
       final docRef = _items.doc();
 
-      // Handle tags (converting document references to tag objects)
+      // Parse tags directly from the preset document
       List<Tag> tags = [];
-      if (presetData['tags'] != null) {
-        final tagRefs = presetData['tags'] as List<dynamic>;
-        for (var tagRef in tagRefs) {
-          if (tagRef is DocumentReference) {
-            final tagDoc = await tagRef.get();
-            if (tagDoc.exists) {
-              tags.add(Tag.fromJSON(tagDoc.data() as Map<String, dynamic>));
-            }
+      if (presetData['tags'] != null && presetData['tags'] is List) {
+        final tagList = presetData['tags'] as List<dynamic>;
+        for (var tagData in tagList) {
+          if (tagData is Map<String, dynamic>) {
+            try {
+              final tag = Tag.fromJSON(tagData);
+              tags.add(tag);
+            } catch (e) {}
           }
         }
-      }
+      } else {}
 
       // Convert tags to format for storage
       final List<Map<String, dynamic>> tagData = tags

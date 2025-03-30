@@ -53,7 +53,6 @@ class _AddItemDialogState extends State<AddItemDialog> {
   @override
   void initState() {
     super.initState();
-
     _tagsFuture = _fetchTags();
 
     // Initialize with default dates if not editing
@@ -159,7 +158,9 @@ class _AddItemDialogState extends State<AddItemDialog> {
         _expireDate == null ||
         _warnDate == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('กรุณากรอกข้อมูลให้ครบถ้วน')),
+        SnackBar(
+            content: Text('กรุณากรอกข้อมูลให้ครบถ้วน',
+                style: GoogleFonts.notoSansThai())),
       );
       return;
     }
@@ -196,7 +197,9 @@ class _AddItemDialogState extends State<AddItemDialog> {
         );
 
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('รายการถูกเพิ่มเรียบร้อยแล้ว')),
+          SnackBar(
+              content: Text('รายการถูกเพิ่มเรียบร้อยแล้ว',
+                  style: GoogleFonts.notoSansThai())),
         );
       } else {
         // Update existing item
@@ -212,7 +215,9 @@ class _AddItemDialogState extends State<AddItemDialog> {
         );
 
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('รายการถูกแก้ไขเรียบร้อยแล้ว')),
+          SnackBar(
+              content: Text('รายการถูกแก้ไขเรียบร้อยแล้ว',
+                  style: GoogleFonts.notoSansThai())),
         );
       }
 
@@ -231,7 +236,9 @@ class _AddItemDialogState extends State<AddItemDialog> {
       Navigator.of(context).pop();
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('เกิดข้อผิดพลาด: $e')),
+        SnackBar(
+            content:
+                Text('เกิดข้อผิดพลาด: $e', style: GoogleFonts.notoSansThai())),
       );
     }
   }

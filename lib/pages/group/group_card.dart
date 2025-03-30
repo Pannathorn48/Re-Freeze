@@ -16,7 +16,12 @@ class GroupCard extends StatelessWidget {
         color: group.color,
         child: InkWell(
           onTap: () {
-            Navigator.pushNamed(context, "/refrigerators");
+            // Pass the group as an argument when navigating to the refrigerators page
+            Navigator.pushNamed(context, "/refrigerators", arguments: {
+              'groupId': group.uid,
+              'groupName': group.name,
+              'filterByGroup': true
+            });
           },
           child: Ink(
             height: 150,

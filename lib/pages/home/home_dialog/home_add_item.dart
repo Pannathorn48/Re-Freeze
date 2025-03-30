@@ -369,20 +369,22 @@ class _AddItemTabState extends State<AddItemTab> {
                                   Navigator.of(context).pop();
 
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
+                                    SnackBar(
                                         content: Text(
-                                            'Item preset created successfully')),
+                                            'Item preset created successfully',
+                                            style: GoogleFonts.notoSansThai())),
                                   );
 
                                   Navigator.of(context).pop();
                                 } catch (e) {
                                   Navigator.of(context).pop();
 
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                        content: Text(
-                                            'Error creating item preset: $e')),
-                                  );
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(SnackBar(
+                                          content: Text(
+                                    'Error creating item preset: $e',
+                                    style: GoogleFonts.notoSansThai(),
+                                  )));
                                 }
                               }
                             },

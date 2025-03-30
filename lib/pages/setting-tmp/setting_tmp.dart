@@ -11,7 +11,10 @@ class SettingTmp extends StatelessWidget {
       child: ElevatedButton(
           onPressed: () async {
             await FirebaseAuth.instance.signOut();
-            Navigator.pushReplacementNamed(context, "/landing");
+            Navigator.of(context).pushNamedAndRemoveUntil(
+              '/landing',
+              (Route<dynamic> route) => false,
+            );
           },
           child: const Text("logout")),
     );
