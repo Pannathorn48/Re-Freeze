@@ -6,12 +6,14 @@ class NotificationCard extends StatelessWidget {
   final void Function() onTap;
   final Color? backgroundColor;
   final Color? primaryColor;
+  final String title;
   const NotificationCard(
       {super.key,
       required this.onTap,
       this.backgroundColor,
       this.primaryColor,
-      required this.icon});
+      required this.icon,
+      required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +44,7 @@ class NotificationCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 10),
                   Text(
-                    "มีของใกล้หมดอายุทั้งหมด ",
+                    title,
                     style: GoogleFonts.notoSansThai(
                         fontSize: 16, color: Colors.black),
                   ),

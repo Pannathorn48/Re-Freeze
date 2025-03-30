@@ -313,4 +313,155 @@ class ItemApi {
           ItemException.getExpiringItemsException);
     }
   }
+  // Add these methods to your ItemApi class in item_api.dart
+
+ /// Get all items that have reached their warning date (today equals warning date)
+  Future<List<Item>> getWarningItems(String userId) async {
+    try {
+      // Get all refrigerators this user has access to
+      final refrigeratorsSnapshot = await _firestore
+          .collection('refrigerators')
+          .where('users', arrayContains: userId)
+          .get();
+
+      final refrigeratorIds =
+          refrigeratorsSnapshot.docs.map((doc) => doc.id).toList();
+
+      if (refrigeratorIds.isEmpty) return [];
+
+      // Calculate today's date at midnight for comparison
+      final now = DateTime.now();
+      final startOfDay = DateTime(now.year, now.month, now.day);
+      final endOfDay = DateTime(now.year, now.month, now.day, 23, 59, 59);
+
+      final allWarningItems = <Item>[];
+
+      // Split refrigeratorIds into batches if needed (Firestore limit)
+      final batches = _chunkList(refrigeratorIds, 10);
+
+      for (final batch in batches) {
+        // Query all items for these refrigerators
+        final itemsQuery =
+            await _items.where('refrigeratorId', whereIn: batch).get();
+
+        // Filter locally for warning date
+        for (final doc in itemsQuery.docs) {
+          final data = doc.data() as Map<String, dynamic>;
+          if (data['warningDate'] != null) {
+            final warningDate = (data['warningDate'] as Timestamp).toDate();
+            // Check if warning date is today
+            if (warningDate
+                    .isAfter(startOfDay.subtract(const Duration(minutes: 1))) &&
+                warningDate
+                    .isBefore(endOfDay.add(const Duration(minutes: 1)))) {
+              allWarningItems.add(Item.fromJSON(data));
+            }
+          }
+        }
+      }
+
+      return allWarningItems;
+    } catch (e) {
+      throw AppException('Error getting warning items: $e',
+          ItemException.getWarningItemsException);
+    }
+  }
+
+  /// Get all items that have reached or passed their expiry date
+  Future<List<Item>> getExpiredItems(String userId) async {
+    try {
+      // Get all refrigerators this user has access to
+      final refrigeratorsSnapshot = await _firestore
+          .collection('refrigerators')
+          .where('users', arrayContains: userId)
+          .get();
+
+      final refrigeratorIds =
+          refrigeratorsSnapshot.docs.map((doc) => doc.id).toList();
+
+      if (refrigeratorIds.isEmpty) return [];
+
+      // Calculate today's date at midnight for comparison
+      final now = DateTime.now();
+      final startOfDay = DateTime(now.year, now.month, now.day);
+
+      final allExpiredItems = <Item>[];
+
+      // Split refrigeratorIds into batches if needed (Firestore limit)
+      final batches = _chunkList(refrigeratorIds, 10);
+
+      for (final batch in batches) {
+        // Query all items for these refrigerators
+        final itemsQuery =
+            await _items.where('refrigeratorId', whereIn: batch).get();
+
+        // Filter locally for expiry date
+        for (final doc in itemsQuery.docs) {
+          final data = doc.data() as Map<String, dynamic>;
+          if (data['expiryDate'] != null) {
+            final expiryDate = (data['expiryDate'] as Timestamp).toDate();
+            // Check if expiry date is today or earlier
+            if (expiryDate
+                .isBefore(startOfDay.add(const Duration(minutes: 1)))) {
+              allExpiredItems.add(Item.fromJSON(data));
+            }
+          }
+        }
+      }
+
+      return allExpiredItems;
+    } catch (e) {
+      throw AppException('Error getting expired items: $e',
+          ItemException.getExpiredItemsException);
+    }
+  }
+
+  /// Helper method to chunk list for batch processing
+  List<List<T>> _chunkList<T>(List<T> list, int chunkSize) {
+    final chunks = <List<T>>[];
+    for (var i = 0; i < list.length; i += chunkSize) {
+      chunks.add(list.sublist(
+          i, i + chunkSize <= list.length ? i + chunkSize : list.length));
+    }
+    return chunks;
+  }
+
+  /// Get refrigerators with warning or expired items
+  Future<Map<String, Map<String, List<Item>>>>
+      getRefrigeratorsWithNotifications(String userId) async {
+    try {
+      final warningItems = await getWarningItems(userId);
+      final expiredItems = await getExpiredItems(userId);
+
+      // Group items by refrigerator
+      final Map<String, Map<String, List<Item>>> result = {};
+
+      // Process warning items
+      for (final item in warningItems) {
+        if (!result.containsKey(item.refrigeratorId)) {
+          result[item.refrigeratorId] = {
+            'warning': [],
+            'expired': [],
+          };
+        }
+        result[item.refrigeratorId]!['warning']!.add(item);
+      }
+
+      // Process expired items
+      for (final item in expiredItems) {
+        if (!result.containsKey(item.refrigeratorId)) {
+          result[item.refrigeratorId] = {
+            'warning': [],
+            'expired': [],
+          };
+        }
+        result[item.refrigeratorId]!['expired']!.add(item);
+      }
+
+      return result;
+    } catch (e) {
+      throw AppException('Error getting refrigerators with notifications: $e',
+          ItemException.getNotificationsException);
+    }
+  }
 }

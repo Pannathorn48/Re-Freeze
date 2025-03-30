@@ -27,6 +27,9 @@ class _GroupPageState extends State<GroupPage> {
   }
 
   Future<void> _loadGroups() async {
+    // Check if the widget is still mounted before updating state
+    if (!mounted) return;
+
     setState(() {
       _isLoading = true;
       _errorMessage = null;
@@ -34,11 +37,17 @@ class _GroupPageState extends State<GroupPage> {
 
     try {
       final groups = await _groupApi.getUserGroups();
+      // Check again if the widget is still mounted after the async call
+      if (!mounted) return;
+
       setState(() {
         _groups = groups;
         _isLoading = false;
       });
     } catch (e) {
+      // Check again if the widget is still mounted after the async call
+      if (!mounted) return;
+
       setState(() {
         _errorMessage = "ไม่สามารถโหลดข้อมูลกลุ่มได้: $e";
         _isLoading = false;
@@ -76,8 +85,8 @@ class _GroupPageState extends State<GroupPage> {
             builder: (context) => const CreateGroupDialog(),
           );
 
-          // Refresh groups list if dialog returned true
-          if (result == true) {
+          // Check if widget is still mounted and if dialog returned true
+          if (mounted && result == true) {
             _refreshGroups();
           }
         },
@@ -154,7 +163,8 @@ class _GroupPageState extends State<GroupPage> {
                   builder: (context) => const CreateGroupDialog(),
                 );
 
-                if (result == true) {
+                // Check if widget is still mounted and if dialog returned true
+                if (mounted && result == true) {
                   _refreshGroups();
                 }
               },
