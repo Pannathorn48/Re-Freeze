@@ -131,7 +131,7 @@ class _ItemTabbedDialogState extends State<ItemTabbedDialog>
               TabBar(
                 dividerColor: CustomColors.grey,
                 controller: _tabController,
-                tabs: [
+                tabs: const [
                   Tab(
                     text: 'สร้างใหม่',
                     icon: Icon(Icons.add_circle_outline),

@@ -53,7 +53,6 @@ class _AddItemDialogState extends State<AddItemDialog> {
   @override
   void initState() {
     super.initState();
-
     _tagsFuture = _fetchTags();
 
     // Initialize with default dates if not editing
