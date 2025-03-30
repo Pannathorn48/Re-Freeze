@@ -431,8 +431,20 @@ class _SettingPageState extends State<SettingPage> {
                                 color: Colors.black45,
                               ),
                               onTap: () {
-                                Navigator.pushNamed(
-                                    context, '/setting/password');
+                                if (FirebaseAuth.instance.currentUser
+                                        ?.providerData[0].providerId ==
+                                    "password") {
+                                  Navigator.pushNamed(
+                                      context, '/setting/password');
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                          'You are logged in with a third-party provider. Password change is not available.'),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                }
                               },
                             ),
                           ),
