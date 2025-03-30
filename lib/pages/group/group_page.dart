@@ -5,6 +5,8 @@ import 'package:mobile_project/components/custom_float_button.dart';
 import 'package:mobile_project/models/group_model.dart';
 import 'package:mobile_project/pages/group/group_card.dart';
 import 'package:mobile_project/pages/group/group_create.dart';
+import 'package:mobile_project/pages/group/group_edit.dart';
+import 'package:mobile_project/pages/group/group_confirm_delete.dart';
 import 'package:mobile_project/services/custom_theme.dart';
 
 class GroupPage extends StatefulWidget {
@@ -194,7 +196,10 @@ class _GroupPageState extends State<GroupPage> {
         padding: const EdgeInsets.only(bottom: 80), // Add padding for FAB
         itemCount: _groups.length,
         itemBuilder: (context, index) {
-          return GroupCard(group: _groups[index]);
+          return GroupCard(
+            group: _groups[index],
+            onGroupChanged: _refreshGroups,
+          );
         },
       ),
     );

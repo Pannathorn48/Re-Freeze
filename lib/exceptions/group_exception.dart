@@ -12,5 +12,7 @@ class GroupException extends AppException {
   static const String removeOwnerException = "remove-owner-error";
   static const String getGroupMembersException = "get-group-members-error";
   static const String unauthorizedDeleteException = "unauthorized-access-error";
+
+  static const String unauthorizedUpdateException = "unauthorized-update-error";
   GroupException(super.message, super.code);
 }

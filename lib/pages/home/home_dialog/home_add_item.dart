@@ -1,4 +1,5 @@
 // First tab - Add Item (from existing code)
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -14,6 +15,7 @@ import 'package:mobile_project/models/item_model.dart';
 import 'package:mobile_project/pages/item-list/date_picker.dart';
 import 'package:mobile_project/pages/item-list/tag_selector.dart';
 import 'package:mobile_project/services/image_service.dart';
+import 'package:mobile_project/services/qr_code.dart';
 
 class AddItemTab extends StatefulWidget {
   const AddItemTab({super.key});
@@ -82,6 +84,50 @@ class _AddItemTabState extends State<AddItemTab> {
       setState(() {
         _warnDate = pickedDate;
       });
+    }
+  }
+
+  Future<void> _scanQRCode() async {
+    try {
+      final result = await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const QRViewExample()),
+      );
+
+      if (result != null) {
+        setState(() {
+          // Update your fields with the result data
+          nameTextController.text = result['name'] ?? '';
+          quantityTextController.text = result['quantity']?.toString() ?? '';
+          unitTextController.text = result['unit'] ?? '';
+
+          if (result['expiryDate'] != null) {
+            _expireDate = DateTime.parse(result['expiryDate']);
+          }
+
+          if (result['warningDate'] != null) {
+            _warnDate = DateTime.parse(result['warningDate']);
+          }
+
+          // Handle tags if they're in the QR code
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('QR code scanned successfully',
+                style: GoogleFonts.notoSansThai()),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error scanning QR code: $e',
+              style: GoogleFonts.notoSansThai()),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
@@ -180,7 +226,9 @@ class _AddItemTabState extends State<AddItemTab> {
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                               ),
-                              onPressed: () {},
+                              onPressed: () async {
+                                await _scanQRCode();
+                              },
                               icon: const Icon(Icons.qr_code_scanner),
                               label: const Text("Scan QR"),
                             ),
@@ -192,7 +240,15 @@ class _AddItemTabState extends State<AddItemTab> {
                             SizedBox(
                               width: 130,
                               child: ElevatedButton.icon(
-                                onPressed: () {},
+                                onPressed: () async {
+                                  XFile? image = await imagePicker.pickImage(
+                                      source: ImageSource.camera);
+                                  if (image != null) {
+                                    setState(() {
+                                      this.image = File(image.path);
+                                    });
+                                  }
+                                },
                                 icon: const Icon(Icons.camera_alt),
                                 label: const Text("camera"),
                               ),

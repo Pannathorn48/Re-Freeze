@@ -301,6 +301,44 @@ class GroupApi {
     }
   }
 
+  /// Update an existing group (only owner can update)
+  Future<void> updateGroup({
+    required String groupId,
+    required String name,
+    required String color,
+    required String description,
+  }) async {
+    final currentUser = _auth.currentUser;
+    if (currentUser == null) {
+      throw UserException("No user logged in", UserException.getUserException);
+    }
+
+    try {
+      // Check if user is the owner
+      final membershipQuery = await _groupMembers
+          .where('groupId', isEqualTo: groupId)
+          .where('userId', isEqualTo: currentUser.uid)
+          .where('role', isEqualTo: 'owner')
+          .get();
+
+      if (membershipQuery.docs.isEmpty) {
+        throw AppException('Only the owner can update the group',
+            GroupException.unauthorizedUpdateException);
+      }
+
+      // Update the group
+      await _groups.doc(groupId).update({
+        'name': name,
+        'color': color,
+        'description': description,
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      throw AppException(
+          'Failed to update group: $e', GroupException.updateGroupException);
+    }
+  }
+
   /// Delete a group (only owner can do this)
   Future<void> deleteGroup(String groupId) async {
     final currentUser = _auth.currentUser;
@@ -321,17 +359,42 @@ class GroupApi {
             GroupException.unauthorizedDeleteException);
       }
 
-      // Delete all memberships
+      // Find all refrigerators associated with this group
+      final refrigeratorsQuery = await _firestore
+          .collection('refrigerators')
+          .where('groupId', isEqualTo: groupId)
+          .get();
+
+      // Create a batch for delete operations
+      final batch = _firestore.batch();
+
+      // Delete all group memberships
       final allMemberships =
           await _groupMembers.where('groupId', isEqualTo: groupId).get();
-
-      final batch = _firestore.batch();
       for (final doc in allMemberships.docs) {
         batch.delete(doc.reference);
       }
 
+      // Delete all refrigerators associated with the group
+      for (final refrigeratorDoc in refrigeratorsQuery.docs) {
+        // Find and delete all items in each refrigerator
+        final itemsQuery = await _firestore
+            .collection('items')
+            .where('refrigeratorId', isEqualTo: refrigeratorDoc.id)
+            .get();
+
+        for (final itemDoc in itemsQuery.docs) {
+          batch.delete(itemDoc.reference);
+        }
+
+        // Delete the refrigerator
+        batch.delete(refrigeratorDoc.reference);
+      }
+
       // Delete the group
       batch.delete(_groups.doc(groupId));
+
+      // Commit all deletions
       await batch.commit();
     } catch (e) {
       throw AppException(
