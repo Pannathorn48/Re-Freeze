@@ -5,19 +5,7 @@ import 'package:mobile_project/components/custom_dropdown_menu.dart';
 import 'package:mobile_project/components/input_feild.dart';
 import 'package:mobile_project/models/dropdownable_model.dart';
 import 'package:mobile_project/models/group_model.dart';
-
-final groupList = <Group>[
-  Group(
-      name: "Tester",
-      color: Colors.purple,
-      creatorName: 'test',
-      description: ''),
-  Group(
-      name: "Meet",
-      color: Colors.redAccent,
-      creatorName: 'test',
-      description: '')
-];
+import 'package:mobile_project/api/group_api.dart';
 
 class AddRefrigeratorDialog extends StatefulWidget {
   const AddRefrigeratorDialog({super.key});
@@ -29,14 +17,50 @@ class AddRefrigeratorDialog extends StatefulWidget {
 class _AddRefrigeratorDialogState extends State<AddRefrigeratorDialog> {
   bool _isSelected = false;
   final TextEditingController _nameTextController = TextEditingController();
+  final GroupApi _groupApi = GroupApi();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  Group? _selectedGroup;
+
+  List<Group>? _groupList;
+  bool _isLoading = false;
+  String? _errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  Future<void> _loadGroups() async {
+    if (_groupList != null) return;
+
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final groups = await _groupApi.getUserGroups();
+      setState(() {
+        _groupList = groups;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _errorMessage = e.toString();
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (_isSelected && _groupList == null && !_isLoading) {
+      _loadGroups();
+    }
+
     return Dialog(
         child: AnimatedContainer(
-      // Add animation duration
       duration: const Duration(milliseconds: 300),
-      // Add curve for smoother animation
       curve: Curves.easeInOut,
       width: MediaQuery.of(context).size.width * 0.95,
       height: _isSelected
@@ -102,10 +126,19 @@ class _AddRefrigeratorDialogState extends State<AddRefrigeratorDialog> {
             const SizedBox(
               height: 10,
             ),
-            InputFeild(
-                label: "ชื่อตู้เย็น",
-                hintText: "",
-                controller: _nameTextController),
+            Form(
+              key: _formKey,
+              child: InputFeild(
+                  label: "ชื่อตู้เย็น",
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "กรุณากรอกชื่อ";
+                    }
+                    return null;
+                  },
+                  hintText: "",
+                  controller: _nameTextController),
+            ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
@@ -154,10 +187,8 @@ class _AddRefrigeratorDialogState extends State<AddRefrigeratorDialog> {
                           const SizedBox(
                             height: 15,
                           ),
-                          CustomDropdownMenu(
-                              width: 300,
-                              onSelected: (Dropdownable? item) {},
-                              items: groupList),
+                          // Use conditional rendering based on loading state
+                          _buildGroupSelector(),
                           const SizedBox(
                             height: 40,
                           ),
@@ -183,7 +214,29 @@ class _AddRefrigeratorDialogState extends State<AddRefrigeratorDialog> {
                     overlayColor: Colors.white,
                     backgroundColor: Colors.redAccent),
                 Button(
-                    onPressed: () {},
+                    onPressed: () {
+                      if (_formKey.currentState?.validate() != true) {
+                        return;
+                      }
+                      if (_isSelected && _selectedGroup == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              "กรุณาเลือกกลุ่ม",
+                              style: GoogleFonts.notoSansThai(),
+                            ),
+                          ),
+                        );
+                        return;
+                      } 
+                      // Here you can handle the form submission
+                      // including the _selectedGroup if _isSelected is true
+                      Navigator.of(context).pop({
+                        'name': _nameTextController.text,
+                        'isPublic': _isSelected,
+                        'group': _isSelected ? _selectedGroup : null,
+                      });
+                    },
                     text: "ตกลง",
                     width: 150,
                     height: 30,
@@ -196,5 +249,38 @@ class _AddRefrigeratorDialogState extends State<AddRefrigeratorDialog> {
         ),
       ),
     ));
+  }
+
+  // Separated widget for the group selector to make the code cleaner
+  Widget _buildGroupSelector() {
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (_errorMessage != null) {
+      return Text(
+        "เกิดข้อผิดพลาดในการโหลดกลุ่ม: $_errorMessage",
+        style: GoogleFonts.notoSansThai(color: Colors.red),
+      );
+    }
+
+    if (_groupList == null || _groupList!.isEmpty) {
+      return Text(
+        "ไม่พบกลุ่ม",
+        style: GoogleFonts.notoSansThai(),
+      );
+    }
+
+    return CustomDropdownMenu(
+      width: 300,
+      onSelected: (Dropdownable? item) {
+        if (item is Group) {
+          setState(() {
+            _selectedGroup = item;
+          });
+        }
+      },
+      items: _groupList!,
+    );
   }
 }

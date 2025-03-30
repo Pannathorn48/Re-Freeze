@@ -1,5 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_project/components/custom_float_button.dart';
@@ -10,6 +8,7 @@ import 'package:mobile_project/services/custom_theme.dart';
 
 final groups = <Group>[
   Group(
+      uid: '',
       name: "test",
       color: Colors.deepOrangeAccent,
       creatorName: 'hello 1',
@@ -18,12 +17,14 @@ final groups = <Group>[
       name: "ลูก",
       color: Colors.lightBlueAccent,
       creatorName: 'hello 2',
-      description: 'this is for my child\' sweet'),
+      description: 'this is for my child\' sweet',
+      uid: ''),
   Group(
       name: "พ่อครัว",
       color: Colors.indigoAccent,
       creatorName: 'hello 3',
-      description: 'this is for my ketchen and chef')
+      description: 'this is for my ketchen and chef',
+      uid: '')
 ];
 
 class GroupPage extends StatefulWidget {

@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ItemPresetApi {
   final CollectionReference _itemPresets =
-      FirebaseFirestore.instance.collection('item-presets');
+      FirebaseFirestore.instance.collection('item_presets');
 
   Future<void> createItemPreset(
       {required String name,
