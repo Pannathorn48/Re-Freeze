@@ -4,6 +4,7 @@ import 'package:mobile_project/pages/group/group_page.dart';
 import 'package:mobile_project/pages/home/home_page.dart';
 import 'package:mobile_project/pages/refrigerators/refrigerators_page.dart';
 import 'package:mobile_project/pages/setting-tmp/setting_tmp.dart';
+import 'package:mobile_project/pages/setting/setting_page.dart';
 import 'package:mobile_project/services/custom_theme.dart';
 import 'package:mobile_project/services/providers.dart';
 import 'package:provider/provider.dart';
@@ -23,7 +24,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
     const HomePage(),
     const RefrigeratorsPage(),
     const GroupPage(),
-    const SettingTmp()
+    SettingPage()
   ];
   @override
   Widget build(BuildContext context) {
