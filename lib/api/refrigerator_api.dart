@@ -135,7 +135,46 @@ class RefrigeratorApi {
     }
   }
 
-  /// Add refrigerator to user's favorites
+  /// Update an existing refrigerator
+  Future<void> updateRefrigerator({
+    required String refrigeratorId,
+    required String name,
+    required bool isPublic,
+    String? imageUrl,
+    String? groupId,
+  }) async {
+    try {
+      final currentUser = _auth.currentUser;
+      if (currentUser == null) {
+        throw UserException(
+            "No user logged in", UserException.getUserException);
+      }
+
+      // Prepare data to update
+      final Map<String, dynamic> data = {
+        'name': name,
+        'isPrivate': !isPublic, // Note: inverting isPublic to match the schema
+        'updatedAt': FieldValue.serverTimestamp(),
+      };
+
+      // Add optional fields if they're provided
+      if (imageUrl != null) {
+        data['imageUrl'] = imageUrl;
+      }
+
+      if (isPublic && groupId != null) {
+        data['groupId'] = groupId;
+      } else {
+        data['groupId'] = "";
+      }
+
+      await _refrigerators.doc(refrigeratorId).update(data);
+    } catch (e) {
+      throw AppException('Error updating refrigerator: $e',
+          RefrigeratorException.updateRefrigeratorException);
+    }
+  }
+
   Future<void> addToFavorites(String refrigeratorId) async {
     try {
       final currentUser = _auth.currentUser;

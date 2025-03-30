@@ -97,7 +97,11 @@ class _ItemListPageState extends State<ItemListPage> {
         _loadItems();
 
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('ไม่พบข้อมูลตู้เย็น')),
+          SnackBar(
+              content: Text(
+            'ไม่พบข้อมูลตู้เย็น',
+            style: GoogleFonts.notoSansThai(),
+          )),
         );
       }
     } catch (e) {
@@ -106,7 +110,11 @@ class _ItemListPageState extends State<ItemListPage> {
       _loadItems();
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('เกิดข้อผิดพลาดในการโหลดข้อมูลตู้เย็น: $e')),
+        SnackBar(
+            content: Text(
+          'เกิดข้อผิดพลาดในการโหลดข้อมูลตู้เย็น: $e',
+          style: GoogleFonts.notoSansThai(),
+        )),
       );
     }
   }
@@ -138,7 +146,9 @@ class _ItemListPageState extends State<ItemListPage> {
           });
 
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('เกิดข้อผิดพลาดในการโหลดข้อมูล: $e')),
+            SnackBar(
+                content: Text('เกิดข้อผิดพลาดในการโหลดข้อมูล: $e',
+                    style: GoogleFonts.notoSansThai())),
           );
         }
       });
@@ -150,7 +160,9 @@ class _ItemListPageState extends State<ItemListPage> {
         });
 
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('เกิดข้อผิดพลาดในการโหลดข้อมูล: $e')),
+          SnackBar(
+              content: Text('เกิดข้อผิดพลาดในการโหลดข้อมูล: $e',
+                  style: GoogleFonts.notoSansThai())),
         );
       }
     }

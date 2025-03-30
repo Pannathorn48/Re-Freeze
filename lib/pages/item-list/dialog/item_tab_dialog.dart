@@ -67,14 +67,18 @@ class _ItemTabbedDialogState extends State<ItemTabbedDialog>
       Navigator.of(context).pop(); // Close the main dialog
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('รายการถูกเพิ่มเรียบร้อยแล้ว')),
+        SnackBar(
+            content: Text('รายการถูกเพิ่มเรียบร้อยแล้ว',
+                style: GoogleFonts.notoSansThai())),
       );
     } catch (e) {
       // Close loading dialog
       Navigator.of(context).pop();
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('เกิดข้อผิดพลาด: $e')),
+        SnackBar(
+            content:
+                Text('เกิดข้อผิดพลาด: $e', style: GoogleFonts.notoSansThai())),
       );
     }
   }

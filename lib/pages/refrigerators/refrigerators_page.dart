@@ -32,11 +32,34 @@ class _RefrigeratorsPageState extends State<RefrigeratorsPage> {
   // Add stream subscription for proper management
   StreamSubscription<QuerySnapshot>? _refrigeratorsSubscription;
 
+  // Variables for group filtering
+  String? _filterGroupId;
+  String? _groupName;
+  bool _filterByGroup = false;
+
   @override
   void initState() {
     super.initState();
     _searchController.addListener(_onSearchChanged);
     _fetchFavoriteRefrigerators();
+
+    // We'll get the group info from route arguments in didChangeDependencies
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // Get the arguments passed from the previous screen
+    final arguments = ModalRoute.of(context)?.settings.arguments;
+
+    if (arguments != null && arguments is Map<String, dynamic>) {
+      setState(() {
+        _filterGroupId = arguments['groupId'];
+        _groupName = arguments['groupName'];
+        _filterByGroup = arguments['filterByGroup'] ?? false;
+      });
+    }
   }
 
   @override
@@ -123,7 +146,10 @@ class _RefrigeratorsPageState extends State<RefrigeratorsPage> {
         centerTitle: true,
         title: Padding(
           padding: const EdgeInsets.only(bottom: 20, top: 20),
-          child: Text("ตู้เย็นทั้งหมด",
+          child: Text(
+              _filterByGroup && _groupName != null
+                  ? "$_groupName - ตู้เย็น"
+                  : "ตู้เย็นทั้งหมด",
               style: GoogleFonts.notoSansThai(
                   fontSize: 20,
                   color: Colors.white,
@@ -134,7 +160,10 @@ class _RefrigeratorsPageState extends State<RefrigeratorsPage> {
       floatingActionButton: CustomFloatButton(onPressed: () {
         showDialog(
             context: context,
-            builder: (context) => const AddRefrigeratorDialog());
+            builder: (context) => AddRefrigeratorDialog(
+                  // Pass the group ID if we're filtering by group
+                  initialGroupId: _filterByGroup ? _filterGroupId : null,
+                ));
       }),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -187,10 +216,19 @@ class _RefrigeratorsPageState extends State<RefrigeratorsPage> {
                             doc.data() as Map<String, dynamic>);
                       }).toList();
 
+                      // Apply group filter if needed
+                      final filteredByGroup =
+                          _filterByGroup && _filterGroupId != null
+                              ? refrigerators
+                                  .where((refrigerator) =>
+                                      refrigerator.groupId == _filterGroupId)
+                                  .toList()
+                              : refrigerators;
+
                       // Apply search filter
                       final filteredRefrigerators = _searchQuery.isEmpty
-                          ? refrigerators
-                          : refrigerators
+                          ? filteredByGroup
+                          : filteredByGroup
                               .where((refrigerator) => refrigerator.name
                                   .toLowerCase()
                                   .contains(_searchQuery.toLowerCase()))
@@ -198,9 +236,34 @@ class _RefrigeratorsPageState extends State<RefrigeratorsPage> {
 
                       if (filteredRefrigerators.isEmpty) {
                         return Center(
-                          child: Text(
-                            'ไม่พบตู้เย็นที่ตรงกับการค้นหา',
-                            style: GoogleFonts.notoSansThai(fontSize: 16),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                _filterByGroup
+                                    ? 'ไม่พบตู้เย็นในกลุ่มนี้'
+                                    : 'ไม่พบตู้เย็นที่ตรงกับการค้นหา',
+                                style: GoogleFonts.notoSansThai(fontSize: 16),
+                              ),
+                              if (_filterByGroup) ...[
+                                const SizedBox(height: 16),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) =>
+                                          AddRefrigeratorDialog(
+                                        initialGroupId: _filterGroupId,
+                                      ),
+                                    );
+                                  },
+                                  child: Text(
+                                    'เพิ่มตู้เย็นในกลุ่มนี้',
+                                    style: GoogleFonts.notoSansThai(),
+                                  ),
+                                ),
+                              ],
+                            ],
                           ),
                         );
                       }
@@ -209,7 +272,7 @@ class _RefrigeratorsPageState extends State<RefrigeratorsPage> {
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
-                          childAspectRatio: 0.9,
+                          childAspectRatio: 0.78,
                         ),
                         itemCount: filteredRefrigerators.length,
                         padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -229,6 +292,7 @@ class _RefrigeratorsPageState extends State<RefrigeratorsPage> {
                             refrigerator: refrigerator,
                             isFavorite: isFavorite,
                             isLoading: isLoading,
+                            filterGroupId: _filterGroupId,
                             onDelete: () async {
                               if (!mounted) return;
                               setState(() {
@@ -244,8 +308,9 @@ class _RefrigeratorsPageState extends State<RefrigeratorsPage> {
                                 if (mounted) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                        content:
-                                            Text('ไม่สามารถลบตู้เย็นได้: $e')),
+                                        content: Text(
+                                            'ไม่สามารถลบตู้เย็นได้: $e',
+                                            style: GoogleFonts.notoSansThai())),
                                   );
                                 }
                               } finally {
@@ -291,7 +356,7 @@ class _RefrigeratorsPageState extends State<RefrigeratorsPage> {
                                     SnackBar(
                                         content: Text(isFavorite
                                             ? 'ไม่สามารถลบออกจากรายการโปรดได้: $e'
-                                            : 'ไม่สามารถเพิ่มในรายการโปรดได้: $e')),
+                                            : 'ไม่สามารถเพิ่มในรายการโปรดได้: $e' , style: GoogleFonts.notoSansThai(),)),
                                   );
                                 }
                               } finally {

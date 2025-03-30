@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:mobile_project/models/item_model.dart';
 
 class ItemPreset {
@@ -38,17 +39,70 @@ class ItemPreset {
       return DateTime.now(); // Fallback
     }
 
-    // Parse tags
-    List<Tag> parseTags(List<dynamic>? tagData) {
-      if (tagData == null) return [];
+    // Parse tags with improved error handling
+    List<Tag> parseTags(dynamic tagData) {
+      if (tagData == null) {
+        print('No tag data found in preset JSON');
+        return [];
+      }
+
+      // Make sure we're dealing with a list
+      if (tagData is! List) {
+        print('Tag data is not a list: ${tagData.runtimeType}');
+        return [];
+      }
+
+      print('Found ${tagData.length} tags in preset JSON');
 
       return tagData.map((tag) {
-        if (tag is Map<String, dynamic>) {
-          return Tag.fromJSON(tag);
+        try {
+          if (tag is Map<String, dynamic>) {
+            print('Processing tag: ${tag.toString()}');
+            // Check if tag has all required fields
+            if (tag.containsKey('uid') &&
+                tag.containsKey('name') &&
+                tag.containsKey('color')) {
+              final colorString = tag['color'] as String;
+              print('Color string: $colorString');
+
+              // Handle color parsing
+              Color parsedColor;
+              try {
+                // Make sure we have a valid hex string
+                String hexColor = colorString;
+                if (!hexColor.startsWith('0X') &&
+                    !hexColor.startsWith('0x') &&
+                    !hexColor.startsWith('#')) {
+                  hexColor = '0X$hexColor';
+                }
+                parsedColor = Color(int.parse(hexColor.replaceAll('#', '')));
+              } catch (e) {
+                print('Error parsing color $colorString: $e');
+                parsedColor = const Color(0xFF000000); // Default black
+              }
+
+              return Tag(
+                uid: tag['uid'] as String,
+                name: tag['name'] as String,
+                color: parsedColor,
+              );
+            } else {
+              print('Tag missing required fields: $tag');
+            }
+          } else {
+            print('Tag is not a Map: ${tag.runtimeType}');
+          }
+        } catch (e) {
+          print('Error parsing tag: $e');
         }
+
+        // Fallback for any parsing errors
         return Tag(uid: '', name: 'Unknown', color: const Color(0xFF000000));
       }).toList();
     }
+
+    final tagList = parseTags(json['tags']);
+    print('Successfully parsed ${tagList.length} tags for preset');
 
     return ItemPreset(
       uid: json['uid'] ?? '',
@@ -62,7 +116,7 @@ class ItemPreset {
       warningDate: json['warningDate'] != null
           ? parseDate(json['warningDate'])
           : DateTime.now(),
-      tags: parseTags(json['tags']),
+      tags: tagList,
       createdBy: json['createdBy'] ?? '',
       createdAt: json['createdAt'] != null
           ? (json['createdAt'] as Timestamp).toDate()
@@ -73,7 +127,6 @@ class ItemPreset {
   // Convert to Item model
   Item toItem(String refrigeratorId) {
     return Item(
-      uid: '',
       name: name,
       quantity: quantity,
       expiryDate: expiryDate,
@@ -87,6 +140,15 @@ class ItemPreset {
 
   // Convert to a Map for Firestore
   Map<String, dynamic> toJSON() {
+    // Convert tags to a serializable format
+    final List<Map<String, dynamic>> tagData = tags
+        .map((tag) => {
+              'uid': tag.uid,
+              'name': tag.name,
+              'color': tag.color.toHexString()
+            })
+        .toList();
+
     return {
       'uid': uid,
       'name': name,
@@ -95,7 +157,7 @@ class ItemPreset {
       'quantity': quantity,
       'expiryDate': Timestamp.fromDate(expiryDate),
       'warningDate': Timestamp.fromDate(warningDate),
-      'tags': tags.map((tag) => tag.toJSON()).toList(),
+      'tags': tagData,
       'createdBy': createdBy,
       'createdAt': createdAt != null
           ? Timestamp.fromDate(createdAt!)

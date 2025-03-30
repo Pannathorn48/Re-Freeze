@@ -74,5 +74,5 @@ Map<String, Widget Function(BuildContext)> pagesRoutes = {
   // item list
   '/item-list': (context) => const ItemListPage(),
   //refrigerators
-  '/refrigerators': (context) => const RefrigeratorsPage()
+  '/refrigerators': (context) => const RefrigeratorsPage(),
 };

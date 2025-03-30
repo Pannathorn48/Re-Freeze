@@ -70,11 +70,7 @@ class ItemApi {
 
       // Convert tags to format for storage
       final List<Map<String, dynamic>> tagData = tags
-          .map((tag) => {
-                'uid': tag.uid,
-                'name': tag.name,
-                'color': tag.color.toHexString()
-              })
+          .map((tag) => {'uid': tag.uid, 'name': tag.name, 'color': tag.color})
           .toList();
 
       // Prepare data to save
@@ -125,30 +121,40 @@ class ItemApi {
             "No user logged in", UserException.getUserException);
       }
 
-      // Get the preset
-      final presetDoc = await _itemPresets.doc(presetId).get();
+      // Get the preset from the item_presets collection, not from items
+      final presetDoc =
+          await _firestore.collection('item_presets').doc(presetId).get();
       if (!presetDoc.exists) {
         throw AppException(
             'Item preset not found', ItemException.presetNotFoundException);
       }
 
       final presetData = presetDoc.data() as Map<String, dynamic>;
+      print('Retrieved preset: ${presetData['name']}');
 
       // Create a new document reference
       final docRef = _items.doc();
 
-      // Handle tags (converting document references to tag objects)
+      // Parse tags directly from the preset document
       List<Tag> tags = [];
-      if (presetData['tags'] != null) {
-        final tagRefs = presetData['tags'] as List<dynamic>;
-        for (var tagRef in tagRefs) {
-          if (tagRef is DocumentReference) {
-            final tagDoc = await tagRef.get();
-            if (tagDoc.exists) {
-              tags.add(Tag.fromJSON(tagDoc.data() as Map<String, dynamic>));
+      if (presetData['tags'] != null && presetData['tags'] is List) {
+        final tagList = presetData['tags'] as List<dynamic>;
+        print('Found ${tagList.length} tags in preset data');
+
+        for (var tagData in tagList) {
+          if (tagData is Map<String, dynamic>) {
+            try {
+              final tag = Tag.fromJSON(tagData);
+              print(
+                  'Parsed tag: ${tag.name} with color ${tag.color.toHexString()}');
+              tags.add(tag);
+            } catch (e) {
+              print('Error parsing tag: $e');
             }
           }
         }
+      } else {
+        print('No tags found in preset data');
       }
 
       // Convert tags to format for storage
@@ -156,9 +162,11 @@ class ItemApi {
           .map((tag) => {
                 'uid': tag.uid,
                 'name': tag.name,
-                'color': tag.color.toHexString(),
+                'color': tag.color.toHexString().replaceAll('#', ''),
               })
           .toList();
+
+      print('Converted ${tagData.length} tags for storage');
 
       // Use custom values or defaults from preset
       final expiryDate =
@@ -185,6 +193,7 @@ class ItemApi {
 
       // Save to Firestore
       await docRef.set(itemData);
+      print('Item created with ${tagData.length} tags');
 
       // Create and return the item object
       return Item(
@@ -199,6 +208,7 @@ class ItemApi {
         tags: tags,
       );
     } catch (e) {
+      print('Error creating item from preset: $e');
       throw AppException('Error creating item from preset: $e',
           ItemException.createItemFromPresetException);
     }

@@ -91,11 +91,15 @@ class EditBottomSheet extends StatelessWidget {
                   try {
                     await itemApi.deleteItem(item!.uid);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('ลบรายการเรียบร้อยแล้ว')),
+                      SnackBar(
+                          content: Text('ลบรายการเรียบร้อยแล้ว',
+                              style: GoogleFonts.notoSansThai())),
                     );
                   } catch (e) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('เกิดข้อผิดพลาดในการลบ: $e')),
+                      SnackBar(
+                          content: Text('เกิดข้อผิดพลาดในการลบ: $e',
+                              style: GoogleFonts.notoSansThai())),
                     );
                   }
                 }
