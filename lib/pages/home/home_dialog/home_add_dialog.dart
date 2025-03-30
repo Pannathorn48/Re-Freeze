@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mobile_project/pages/home/home_add_item.dart';
-import 'package:mobile_project/pages/home/tag_creator.dart';
+import 'package:mobile_project/pages/home/home_dialog/home_add_item.dart';
+import 'package:mobile_project/pages/home/home_dialog/tag_creator.dart';
 import 'package:mobile_project/services/custom_theme.dart';
 
 class TabbedDialog extends StatefulWidget {

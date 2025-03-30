@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_project/models/refrigerators_model.dart';
-import 'package:mobile_project/pages/home/favorite_refrigerator_card.dart';
+import 'package:mobile_project/pages/home/favorite/favorite_refrigerator_card.dart';
 import 'package:mobile_project/services/custom_theme.dart';
+import 'package:mobile_project/services/image_service.dart';
 
 class FavoriteRefrigeratorWidget extends StatelessWidget {
   final List<Refrigerator> favoriteRefrigerators;
@@ -11,9 +12,7 @@ class FavoriteRefrigeratorWidget extends StatelessWidget {
     required ScrollController favoriteScrollController,
     required this.favoriteRefrigerators,
   }) : _favoriteScrollController = favoriteScrollController;
-
   final ScrollController _favoriteScrollController;
-
   @override
   Widget build(BuildContext context) {
     if (favoriteRefrigerators.isEmpty) {
@@ -44,9 +43,19 @@ class FavoriteRefrigeratorWidget extends StatelessWidget {
             itemCount: favoriteRefrigerators.length,
             scrollDirection: Axis.horizontal,
             itemBuilder: (context, index) {
+              final refrigerator = favoriteRefrigerators[
+                  index]; // Get the full refrigerator object
+
+              // Prepare the image URL
+              String? imageUrl = refrigerator.imageUrl;
+              if (imageUrl != null) {
+                imageUrl = ImageService.getSignURL(imageUrl);
+              }
+
               return FavoriteRefrigeratorCard(
-                refrigeratorImage: Image.asset("assets/images/no-image.png"),
-                refrigeratorName: favoriteRefrigerators[index].name,
+                refrigeratorImagePath: imageUrl,
+                refrigeratorName: refrigerator.name,
+                refrigerator: refrigerator, // Pass the full refrigerator object
                 onTap: () {},
               );
             },

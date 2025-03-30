@@ -2,16 +2,21 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mobile_project/exceptions/user_exception.dart';
 import 'package:mobile_project/models/user.dart';
 import 'package:mobile_project/services/image_service.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class UserApi {
-  final CollectionReference _users =
-      FirebaseFirestore.instance.collection('users');
+  final FirebaseFirestore _firestore;
+  final CollectionReference _users;
+
+  UserApi({FirebaseFirestore? firestore})
+      : _firestore = firestore ?? FirebaseFirestore.instance,
+        _users = (firestore ?? FirebaseFirestore.instance).collection('users');
 
   Future<void> initUser(String uid, String displayName) {
     return _users.doc(uid).set({
       'uid': uid,
       'displayName': displayName,
+      'refrigeratorsArray': [], // Initialize with empty array
+      'refrigerators': [], // Also initialize this field in case you use it
     });
   }
 
@@ -33,7 +38,7 @@ class UserApi {
 
   Future<void> updateDisplayName(String uid, String newName) async {
     try {
-      _users.doc(uid).update({'displayName': newName});
+      await _users.doc(uid).update({'displayName': newName});
     } catch (e) {
       throw UserException(
           e.toString(), UserException.updateDisplayNameException);
@@ -42,7 +47,7 @@ class UserApi {
 
   Future<void> updateProfilePicture(String uid, String imageURL) async {
     try {
-      _users.doc(uid).update({'profilePictureURL': imageURL});
+      await _users.doc(uid).update({'profilePictureURL': imageURL});
     } catch (e) {
       throw UserException(
           e.toString(), UserException.updateProfilePictureException);
@@ -65,7 +70,8 @@ class UserApi {
     }
   }
 
-  Stream<QuerySnapshot<Object?>> getFavritesRefrigerators(String uid) {
+  // Fixed method name from "getFavritesRefrigerators" to "getFavoriteRefrigerators"
+  Stream<QuerySnapshot<Object?>> getFavoriteRefrigerators(String uid) {
     return _users.doc(uid).collection('refrigerators').snapshots();
   }
 }

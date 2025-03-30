@@ -353,12 +353,6 @@ class _AddItemTabState extends State<AddItemTab> {
                                         'Image is required to create an item preset');
                                   }
 
-                                  List<DocumentReference> tagRefs = tags
-                                      .map((tag) => FirebaseFirestore.instance
-                                          .collection('tags')
-                                          .doc(tag.uid))
-                                      .toList();
-
                                   // Create the item preset
                                   await _itemPresetApi.createItemPreset(
                                     name: nameTextController.text,
@@ -369,7 +363,7 @@ class _AddItemTabState extends State<AddItemTab> {
                                         0,
                                     expiryDate: _expireDate ?? DateTime.now(),
                                     warningDate: _warnDate ?? DateTime.now(),
-                                    tags: tagRefs,
+                                    tags: tags,
                                   );
 
                                   Navigator.of(context).pop();
