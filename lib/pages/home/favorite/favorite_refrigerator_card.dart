@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mobile_project/models/refrigerators_model.dart';
+import 'package:mobile_project/services/image_service.dart';
 
 class FavoriteRefrigeratorCard extends StatelessWidget {
-  final Image refrigeratorImage;
+  final String? refrigeratorImagePath;
   final String refrigeratorName;
+  final Refrigerator refrigerator; // Add the refrigerator object
   final void Function() onTap;
-  const FavoriteRefrigeratorCard(
-      {super.key,
-      required this.refrigeratorImage,
-      required this.refrigeratorName,
-      required this.onTap});
+
+  const FavoriteRefrigeratorCard({
+    super.key,
+    required this.refrigeratorImagePath,
+    required this.refrigeratorName,
+    required this.refrigerator, // Required parameter
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +26,12 @@ class FavoriteRefrigeratorCard extends StatelessWidget {
         clipBehavior: Clip.hardEdge,
         child: InkWell(
           onTap: () {
-            Navigator.pushNamed(context, "/item-list");
+            // Pass the refrigerator object to the item list page
+            Navigator.pushNamed(
+              context,
+              "/item-list",
+              arguments: refrigerator,
+            );
           },
           child: Ink(
             width: 150,
@@ -28,9 +39,9 @@ class FavoriteRefrigeratorCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Expanded(
-                  child: SizedBox(
-                    width: 80,
-                    child: refrigeratorImage,
+                  child: Container(
+                    width: double.infinity,
+                    child: _buildImage(),
                   ),
                 ),
                 Padding(
@@ -46,5 +57,25 @@ class FavoriteRefrigeratorCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _buildImage() {
+    if (refrigeratorImagePath == null) {
+      return Image.asset(
+        "assets/images/no-image.png",
+        fit: BoxFit.cover,
+      );
+    } else {
+      return Image.network(
+        refrigeratorImagePath!,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          return Image.asset(
+            "assets/images/no-image.png",
+            fit: BoxFit.cover,
+          );
+        },
+      );
+    }
   }
 }

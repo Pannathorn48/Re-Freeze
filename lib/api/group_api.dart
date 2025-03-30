@@ -12,7 +12,6 @@ class GroupApi {
   final UserApi _userApi;
   final FirebaseFirestore _firestore;
   final FirebaseAuth _auth;
-  final Map<String, Group> _cache = {};
 
   GroupApi({
     UserApi? userApi,
@@ -71,15 +70,12 @@ class GroupApi {
       // Create Group object
       final colorObj = Color(int.parse("0X$color"));
       final group = Group(
-        uid: docRef.id, // Add uid to your Group model!
+        uid: docRef.id,
         name: name,
         color: colorObj,
         creatorName: user.displayName ?? "Unknown",
         description: description,
       );
-
-      // Cache the new group
-      _cache[group.uid] = group;
 
       return group;
     } catch (e) {
@@ -89,7 +85,7 @@ class GroupApi {
   }
 
   /// Get all groups the user is a member of
-  Future<List<Group>> getUserGroups({bool useCache = true}) async {
+  Future<List<Group>> getUserGroups() async {
     final user = _auth.currentUser;
     if (user == null) return [];
 
@@ -100,53 +96,35 @@ class GroupApi {
 
       // Extract group IDs
       final groupIds = membershipQuery.docs
-          .map((doc) => doc.data()['groupId'] as String)
+          .map((doc) =>
+              (doc.data() as Map<String, dynamic>)['groupId'] as String)
           .toList();
 
       if (groupIds.isEmpty) return [];
 
-      // Prepare groups list and track missing IDs
       final groups = <Group>[];
-      final missingIds = <String>[];
 
-      // Check cache first if enabled
-      if (useCache) {
-        for (final id in groupIds) {
-          if (_cache.containsKey(id)) {
-            groups.add(_cache[id]!);
-          } else {
-            missingIds.add(id);
-          }
-        }
-      } else {
-        missingIds.addAll(groupIds);
-      }
+      // Split into chunks of 10 for whereIn queries
+      final chunks = _chunkList(groupIds, 10);
 
-      // Batch fetch missing groups
-      if (missingIds.isNotEmpty) {
-        // Split into chunks of 10 for whereIn queries
-        final chunks = _chunkList(missingIds, 10);
+      for (final chunk in chunks) {
+        final querySnapshot =
+            await _groups.where(FieldPath.documentId, whereIn: chunk).get();
 
-        for (final chunk in chunks) {
-          final querySnapshot =
-              await _groups.where(FieldPath.documentId, whereIn: chunk).get();
+        for (final doc in querySnapshot.docs) {
+          final data = doc.data() as Map<String, dynamic>;
+          final colorData = data['color'];
+          final color = Color(int.parse("0X$colorData"));
 
-          for (final doc in querySnapshot.docs) {
-            final data = doc.data() as Map<String, dynamic>;
-            final colorData = data['color'];
-            final color = Color(int.parse("0X$colorData"));
+          final group = Group(
+            uid: doc.id,
+            name: data['name'],
+            color: color,
+            creatorName: data['creatorName'],
+            description: data['description'],
+          );
 
-            final group = Group(
-              uid: doc.id, // Add uid to your Group model!
-              name: data['name'],
-              color: color,
-              creatorName: data['creatorName'],
-              description: data['description'],
-            );
-
-            groups.add(group);
-            _cache[group.uid] = group; // Update cache
-          }
+          groups.add(group);
         }
       }
 
@@ -158,13 +136,8 @@ class GroupApi {
   }
 
   /// Get a single group by ID
-  Future<Group?> getGroupById(String groupId, {bool useCache = true}) async {
+  Future<Group?> getGroupById(String groupId) async {
     try {
-      // Try cache first
-      if (useCache && _cache.containsKey(groupId)) {
-        return _cache[groupId];
-      }
-
       // Fetch from Firestore
       final doc = await _groups.doc(groupId).get();
       if (!doc.exists) {
@@ -176,15 +149,12 @@ class GroupApi {
       final color = Color(int.parse("0X$colorData"));
 
       final group = Group(
-        uid: doc.id, // Add uid to your Group model!
+        uid: doc.id,
         name: data['name'],
         color: color,
         creatorName: data['creatorName'],
         description: data['description'],
       );
-
-      // Cache result
-      _cache[groupId] = group;
 
       return group;
     } catch (e) {
@@ -324,9 +294,6 @@ class GroupApi {
       // Delete the group
       batch.delete(_groups.doc(groupId));
       await batch.commit();
-
-      // Remove from cache
-      _cache.remove(groupId);
     } catch (e) {
       throw AppException(
           'Failed to delete group: $e', GroupException.deleteGroupException);
@@ -341,10 +308,5 @@ class GroupApi {
           i, i + chunkSize <= list.length ? i + chunkSize : list.length));
     }
     return chunks;
-  }
-
-  /// Clear the cache
-  void clearCache() {
-    _cache.clear();
   }
 }

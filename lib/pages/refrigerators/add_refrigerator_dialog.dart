@@ -1,11 +1,16 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:mobile_project/api/refrigerator_api.dart';
 import 'package:mobile_project/components/button.dart';
 import 'package:mobile_project/components/custom_dropdown_menu.dart';
 import 'package:mobile_project/components/input_feild.dart';
 import 'package:mobile_project/models/dropdownable_model.dart';
 import 'package:mobile_project/models/group_model.dart';
 import 'package:mobile_project/api/group_api.dart';
+import 'package:mobile_project/services/image_service.dart';
 
 class AddRefrigeratorDialog extends StatefulWidget {
   const AddRefrigeratorDialog({super.key});
@@ -19,6 +24,9 @@ class _AddRefrigeratorDialogState extends State<AddRefrigeratorDialog> {
   final TextEditingController _nameTextController = TextEditingController();
   final GroupApi _groupApi = GroupApi();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final _refrigeratorApi = RefrigeratorApi();
+  final ImagePicker _imagePicker = ImagePicker();
+  File? image;
   Group? _selectedGroup;
 
   List<Group>? _groupList;
@@ -102,7 +110,21 @@ class _AddRefrigeratorDialogState extends State<AddRefrigeratorDialog> {
             const SizedBox(
               height: 10,
             ),
-            Image.asset("assets/images/no-image.png", width: 150, height: 150),
+            ClipOval(
+              child: image == null
+                  ? Image.asset(
+                      "assets/images/no-image.png",
+                      width: 150,
+                      height: 150,
+                      fit: BoxFit.cover,
+                    )
+                  : Image.file(
+                      image!,
+                      width: 150,
+                      height: 150,
+                      fit: BoxFit.cover,
+                    ),
+            ),
             const SizedBox(
               height: 10,
             ),
@@ -114,7 +136,17 @@ class _AddRefrigeratorDialogState extends State<AddRefrigeratorDialog> {
                   borderRadius: BorderRadius.circular(15),
                 ),
               ),
-              onPressed: () {},
+              onPressed: () async {
+                XFile? selectedImage = await _imagePicker.pickImage(
+                  source: ImageSource.gallery,
+                  imageQuality: 50,
+                );
+                if (selectedImage != null) {
+                  setState(() {
+                    image = File(selectedImage.path);
+                  });
+                }
+              },
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Text(
@@ -214,28 +246,63 @@ class _AddRefrigeratorDialogState extends State<AddRefrigeratorDialog> {
                     overlayColor: Colors.white,
                     backgroundColor: Colors.redAccent),
                 Button(
-                    onPressed: () {
+                    onPressed: () async {
                       if (_formKey.currentState?.validate() != true) {
-                        return;
+                      return;
                       }
                       if (_isSelected && _selectedGroup == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                        content: Text(
+                          "กรุณาเลือกกลุ่ม",
+                          style: GoogleFonts.notoSansThai(),
+                        ),
+                        ),
+                      );
+                      return;
+                      }
+                      if (image == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                        content: Text(
+                          "กรุณาเลือกรูป",
+                          style: GoogleFonts.notoSansThai(),
+                        ),
+                        ),
+                      );
+                      return;
+                      }
+
+                      try {
+                        final fullPath = await ImageService.uploadImage(
+                            image!.path, "refrigerators");
+                        await _refrigeratorApi.addRefrigerators(
+                          name: _nameTextController.text,
+                          isPublic: _isSelected,
+                          imageUrl: fullPath,
+                          groupId: _isSelected ? _selectedGroup?.uid : null,
+                        );
+
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(
-                              "กรุณาเลือกกลุ่ม",
+                              "เพิ่มตู้เย็นสำเร็จ",
                               style: GoogleFonts.notoSansThai(),
                             ),
                           ),
                         );
-                        return;
-                      } 
-                      // Here you can handle the form submission
-                      // including the _selectedGroup if _isSelected is true
-                      Navigator.of(context).pop({
-                        'name': _nameTextController.text,
-                        'isPublic': _isSelected,
-                        'group': _isSelected ? _selectedGroup : null,
-                      });
+                      } catch (error) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              "เกิดข้อผิดพลาด: $error",
+                              style: GoogleFonts.notoSansThai(),
+                            ),
+                          ),
+                        );
+                      }
+
+                      Navigator.of(context).pop();
                     },
                     text: "ตกลง",
                     width: 150,

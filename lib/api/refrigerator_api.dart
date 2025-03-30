@@ -12,7 +12,6 @@ class RefrigeratorApi {
   final UserApi _userApi;
   final FirebaseFirestore _firestore;
   final FirebaseAuth _auth;
-  final Map<String, Refrigerator> _cache = {};
 
   RefrigeratorApi({
     UserApi? userApi,
@@ -30,26 +29,15 @@ class RefrigeratorApi {
     return _refrigerators.where('users', arrayContains: uid).snapshots();
   }
 
-  /// Get refrigerator by ID, with optional caching
-  Future<Refrigerator?> getRefrigeratorById(String id,
-      {bool useCache = true}) async {
-    // Try to get from cache first if enabled
-    if (useCache && _cache.containsKey(id)) {
-      return _cache[id];
-    }
-
+  /// Get refrigerator by ID
+  Future<Refrigerator?> getRefrigeratorById(String id) async {
     try {
       final doc = await _refrigerators.doc(id).get();
       if (!doc.exists) {
         return null;
       }
 
-      final refrigerator =
-          Refrigerator.fromJSON(doc.data() as Map<String, dynamic>);
-
-      // Store in cache for future use
-      _cache[id] = refrigerator;
-      return refrigerator;
+      return Refrigerator.fromJSON(doc.data() as Map<String, dynamic>);
     } catch (e) {
       throw AppException('Error fetching refrigerator: $e',
           RefrigeratorException.getRefrigeratorException);
@@ -64,33 +52,30 @@ class RefrigeratorApi {
         throw UserException("User not found", UserException.getUserException);
       }
 
-      final List<Refrigerator> favoriteRefrigerators = [];
-      final List<String> missingRefIds = [];
-
-      // First check cache for each refrigerator
-      for (var ref in user.refrigeratorsArray) {
-        if (_cache.containsKey(ref.id)) {
-          favoriteRefrigerators.add(_cache[ref.id]!);
-        } else {
-          missingRefIds.add(ref.id);
-        }
+      // If user has no favorites, return empty list
+      if (user.refrigeratorsArray.isEmpty) {
+        return [];
       }
 
-      // For missing refrigerators, batch query them
-      if (missingRefIds.isNotEmpty) {
-        final chunkedIds =
-            _chunkList(missingRefIds, 10); // Firestore limitations
+      final List<Refrigerator> favoriteRefrigerators = [];
 
-        for (final chunk in chunkedIds) {
-          final snapshot = await _refrigerators
-              .where(FieldPath.documentId, whereIn: chunk)
-              .get();
+      // Handle different types of refrigerator references
+      for (var ref in user.refrigeratorsArray) {
+        String? refrigeratorId;
 
-          for (final doc in snapshot.docs) {
-            final refrigerator =
-                Refrigerator.fromJSON(doc.data() as Map<String, dynamic>);
-            favoriteRefrigerators.add(refrigerator);
-            _cache[refrigerator.uid] = refrigerator; // Update cache
+        if (ref is DocumentReference) {
+          // It's a document reference
+          refrigeratorId = ref.id;
+        } else if (ref is Map<String, dynamic> && ref.containsKey('id')) {
+          // It's a map with an id field
+          refrigeratorId = ref['id'] as String;
+        }
+
+        if (refrigeratorId != null) {
+          final doc = await _refrigerators.doc(refrigeratorId).get();
+          if (doc.exists) {
+            favoriteRefrigerators
+                .add(Refrigerator.fromJSON(doc.data() as Map<String, dynamic>));
           }
         }
       }
@@ -136,19 +121,14 @@ class RefrigeratorApi {
       // Save to Firestore
       await docRef.set(refrigeratorData);
 
-      // Create the refrigerator object
-      final refrigerator = Refrigerator(
+      // Create and return the refrigerator object
+      return Refrigerator(
         uid: docRef.id,
         name: name,
         groupId: groupId ?? "",
         imageUrl: imageUrl,
         isPrivate: !isPublic,
       );
-
-      // Cache the new refrigerator
-      _cache[refrigerator.uid] = refrigerator;
-
-      return refrigerator;
     } catch (e) {
       throw AppException('Error creating refrigerator: $e',
           RefrigeratorException.createRefrigeratorException);
@@ -220,9 +200,8 @@ class RefrigeratorApi {
             "No user logged in", UserException.getUserException);
       }
 
-      // Check if user is the owner
-      final refrigerator =
-          await getRefrigeratorById(refrigeratorId, useCache: false);
+      // Check if refrigerator exists
+      final refrigerator = await getRefrigeratorById(refrigeratorId);
       if (refrigerator == null) {
         throw AppException('Refrigerator not found',
             RefrigeratorException.getRefrigeratorException);
@@ -230,27 +209,9 @@ class RefrigeratorApi {
 
       // Delete document
       await _refrigerators.doc(refrigeratorId).delete();
-
-      // Remove from cache
-      _cache.remove(refrigeratorId);
     } catch (e) {
       throw AppException('Error deleting refrigerator: $e',
           RefrigeratorException.deleteRefrigeratorException);
     }
-  }
-
-  /// Helper method to chunk a list for batch operations
-  List<List<T>> _chunkList<T>(List<T> list, int chunkSize) {
-    final chunks = <List<T>>[];
-    for (var i = 0; i < list.length; i += chunkSize) {
-      chunks.add(list.sublist(
-          i, i + chunkSize <= list.length ? i + chunkSize : list.length));
-    }
-    return chunks;
-  }
-
-  /// Clear the cache
-  void clearCache() {
-    _cache.clear();
   }
 }
