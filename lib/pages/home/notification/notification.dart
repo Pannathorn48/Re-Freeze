@@ -215,11 +215,15 @@ class _NotificationWidgetState extends State<NotificationWidget> {
                   ),
                 ),
                 const SizedBox(width: 10),
-                Text(
-                  title,
-                  style: GoogleFonts.notoSansThai(
-                      fontSize: 16, color: Colors.black),
+                Flexible(
+                  child: Text(
+                    title,
+                    style: GoogleFonts.notoSansThai(
+                        fontSize: 16, color: Colors.black),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
+                const SizedBox(width: 5),
                 Container(
                   width: 40,
                   padding:
@@ -234,6 +238,7 @@ class _NotificationWidgetState extends State<NotificationWidget> {
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: primaryColor),
+                    textAlign: TextAlign.center,
                   ),
                 ),
                 Text(

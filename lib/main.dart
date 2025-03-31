@@ -80,8 +80,8 @@ Map<String, Widget Function(BuildContext)> pagesRoutes = {
   //refrigerators
   '/refrigerators': (context) => const RefrigeratorsPage(),
   '/low-quantity': (context) => const LowQuantityScreen(),
-  //settingd
-  '/setting': (context) => SettingPage(),
+  //setting
+  '/setting': (context) => const SettingPage(),
   '/setting/profile': (context) => const SettingProfile(),
   '/setting/password': (context) => const SettingPassword(),
 };

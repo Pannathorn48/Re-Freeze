@@ -144,7 +144,18 @@ class _SignUpFormState extends State<SignUpForm> {
             Button(
               onPressed: () async {
                 try {
-                  await GoogleAuth.signInWithGoogle();
+                  final userCred = await GoogleAuth.signInWithGoogle();
+                  final exist = await _userDatabase.getUser(userCred.user!.uid);
+                  if (exist?.displayName == null) {
+                    Navigator.pushNamed(context, "/signup/display-name");
+                  } else {
+                    if (mounted) {
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                        '/home',
+                        (Route<dynamic> route) => false,
+                      );
+                    }
+                  }
                 } catch (error) {
                   showDialog(
                       context: context,
