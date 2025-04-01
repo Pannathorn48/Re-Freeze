@@ -32,6 +32,7 @@ class InputFeild extends StatelessWidget {
           ),
           TextFormField(
               controller: controller,
+              style: GoogleFonts.notoSansThai(),
               decoration: InputDecoration(
                   suffixIcon: suffixIcon,
                   suffixIconColor: suffixIcon != null ? Colors.black26 : null,

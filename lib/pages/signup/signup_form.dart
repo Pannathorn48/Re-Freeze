@@ -5,8 +5,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_project/components/button.dart';
 import 'package:mobile_project/components/icon_dialog.dart';
 import 'package:mobile_project/components/input_feild.dart';
-import 'package:mobile_project/api/user_controller.dart';
+import 'package:mobile_project/api/user_api.dart';
 import 'package:mobile_project/models/user.dart';
+import 'package:mobile_project/services/custom_theme.dart';
 import 'package:mobile_project/services/login_service.dart';
 import 'package:mobile_project/services/validator_service.dart';
 
@@ -18,7 +19,7 @@ class SignUpForm extends StatefulWidget {
 }
 
 class _SignUpFormState extends State<SignUpForm> {
-  final UserDatabase _userDatabase = UserDatabase();
+  final UserApi _userDatabase = UserApi();
   final _formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -98,13 +99,15 @@ class _SignUpFormState extends State<SignUpForm> {
                       PlatformUser? currentUser =
                           await _userDatabase.getUser(userCred.user!.uid);
                       if (currentUser?.displayName == null) {
-                        _userDatabase.initUser(userCred.user!.uid,
-                            userCred.user!.displayName ?? "");
                         Navigator.pushNamed(context, "/signup/display-name");
-                      } else {}
-                    }
-                    if (mounted) {
-                      Navigator.pushNamed(context, '/home');
+                      } else {
+                        if (mounted) {
+                          Navigator.of(context).pushNamedAndRemoveUntil(
+                            '/home',
+                            (Route<dynamic> route) => false,
+                          );
+                        }
+                      }
                     }
                   } on FirebaseAuthException catch (error) {
                     showDialog(
@@ -112,10 +115,10 @@ class _SignUpFormState extends State<SignUpForm> {
                         builder: (context) => IconDialog(
                               icon: const Icon(Icons.error),
                               title: "Failed to sign up",
-                              titleColor: Colors.redAccent,
+                              titleColor: CustomColors.error,
                               content: error.message!,
                               actionText: "Try again",
-                              actionColor: Colors.redAccent,
+                              actionColor: CustomColors.error,
                             ));
                   }
                 }
@@ -141,17 +144,28 @@ class _SignUpFormState extends State<SignUpForm> {
             Button(
               onPressed: () async {
                 try {
-                  await GoogleAuth.signInWithGoogle();
+                  final userCred = await GoogleAuth.signInWithGoogle();
+                  final exist = await _userDatabase.getUser(userCred.user!.uid);
+                  if (exist?.displayName == null) {
+                    Navigator.pushNamed(context, "/signup/display-name");
+                  } else {
+                    if (mounted) {
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                        '/home',
+                        (Route<dynamic> route) => false,
+                      );
+                    }
+                  }
                 } catch (error) {
                   showDialog(
                       context: context,
                       builder: (context) => const IconDialog(
                             icon: Icon(Icons.error),
                             title: "Failed to sign up",
-                            titleColor: Colors.redAccent,
+                            titleColor: CustomColors.error,
                             content: "something went wrong , please try again",
                             actionText: "Try again",
-                            actionColor: Colors.redAccent,
+                            actionColor: CustomColors.error,
                           ));
                 }
               },

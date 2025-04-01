@@ -26,7 +26,8 @@ class _SearchTextInputState extends State<SearchTextInput> {
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(50),
-          borderSide: BorderSide(color: Colors.blue[100]!),
+          borderSide:
+              BorderSide(color: Theme.of(context).colorScheme.primaryContainer),
         ),
       ),
     );

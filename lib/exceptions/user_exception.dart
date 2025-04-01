@@ -1,11 +1,11 @@
-class UserException implements Exception {
-  final String message;
-  final String code;
+import 'package:mobile_project/exceptions/app_exception.dart';
 
-  UserException(this.message, this.code);
+class UserException extends AppException {
+  static const String getUserException = "get-user-error";
+  static const String updateDisplayNameException = "update-display-name-error";
+  static const String imageFetchException = "image-fetch-error";
+  static const String updateProfilePictureException =
+      "update-profile-picture-error";
 
-  @override
-  String toString() {
-    return message;
-  }
+  UserException(super.message, super.code);
 }

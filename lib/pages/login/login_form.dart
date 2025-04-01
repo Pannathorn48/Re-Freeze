@@ -2,9 +2,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mobile_project/api/user_api.dart';
 import 'package:mobile_project/components/button.dart';
 import 'package:mobile_project/components/icon_dialog.dart';
 import 'package:mobile_project/components/input_feild.dart';
+import 'package:mobile_project/services/custom_theme.dart';
 import 'package:mobile_project/services/login_service.dart';
 import 'package:mobile_project/services/validator_service.dart';
 
@@ -16,10 +18,18 @@ class LoginForm extends StatefulWidget {
 }
 
 class _LoginFormState extends State<LoginForm> {
+  late UserApi userController;
   bool _isVisible = false;
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    userController = UserApi();
+  }
+
   @override
   void dispose() {
     emailController.dispose();
@@ -74,8 +84,15 @@ class _LoginFormState extends State<LoginForm> {
                         .signInWithEmailAndPassword(
                             email: emailController.text,
                             password: passwordController.text);
-                    if (userCredential.user != null && mounted) {
-                      Navigator.of(context).pushNamed("/home");
+                    final exist =
+                        await userController.getUser(userCredential.user!.uid);
+                    if (exist?.displayName == null) {
+                      Navigator.pushNamed(context, "/signup/display-name");
+                    } else {
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                        '/home',
+                        (Route<dynamic> route) => false,
+                      );
                     }
                   } on FirebaseAuthException catch (e) {
                     switch (e.code) {
@@ -86,11 +103,11 @@ class _LoginFormState extends State<LoginForm> {
                             builder: (context) => const IconDialog(
                                 icon: Icon(Icons.error),
                                 title: "Invalid Credential",
-                                titleColor: Colors.redAccent,
+                                titleColor: CustomColors.error,
                                 content:
                                     "Your email or password is incorrect , please try again",
                                 actionText: "Try again",
-                                actionColor: Colors.redAccent));
+                                actionColor: CustomColors.error));
                         break;
                       case 'network-request-failed':
                         showDialog(
@@ -98,11 +115,11 @@ class _LoginFormState extends State<LoginForm> {
                             builder: (context) => const IconDialog(
                                 icon: Icon(Icons.error),
                                 title: "Network Error",
-                                titleColor: Colors.redAccent,
+                                titleColor: CustomColors.error,
                                 content:
                                     "It seem to be a problem with network , please try again later",
                                 actionText: "Try again",
-                                actionColor: Colors.redAccent));
+                                actionColor: CustomColors.error));
                         break;
                     }
                   }
@@ -129,17 +146,29 @@ class _LoginFormState extends State<LoginForm> {
             Button(
               onPressed: () async {
                 try {
-                  await GoogleAuth.signInWithGoogle();
+                  final userCred = await GoogleAuth.signInWithGoogle();
+                  final exist =
+                      await userController.getUser(userCred.user!.uid);
+                  if (exist?.displayName == null) {
+                    Navigator.pushNamed(context, "/signup/display-name");
+                  } else {
+                    if (mounted) {
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                        '/home',
+                        (Route<dynamic> route) => false,
+                      );
+                    }
+                  }
                 } catch (error) {
                   showDialog(
                       context: context,
                       builder: (context) => const IconDialog(
                             icon: Icon(Icons.error),
                             title: "Failed to sign up",
-                            titleColor: Colors.redAccent,
+                            titleColor: CustomColors.error,
                             content: "something went wrong , please try again",
                             actionText: "Try again",
-                            actionColor: Colors.redAccent,
+                            actionColor: CustomColors.error,
                           ));
                 }
               },

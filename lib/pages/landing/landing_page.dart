@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mobile_project/api/user_api.dart';
 import 'package:mobile_project/components/button.dart';
 import 'package:mobile_project/components/icon_dialog.dart';
 import 'package:mobile_project/services/login_service.dart';
@@ -14,6 +15,13 @@ class LandingPage extends StatefulWidget {
 }
 
 class _LandingPageState extends State<LandingPage> {
+  late UserApi userController;
+  @override
+  void initState() {
+    super.initState();
+    userController = UserApi();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,8 +55,22 @@ class _LandingPageState extends State<LandingPage> {
               child: Button(
                 onPressed: () async {
                   try {
-                    await GoogleAuth.signInWithGoogle();
+                    final userCred = await GoogleAuth.signInWithGoogle();
+                    final exist =
+                        await userController.getUser(userCred.user!.uid);
+                    if (exist != null && exist.displayName != null) {
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                        '/home',
+                        (Route<dynamic> route) => false,
+                      );
+                    } else {
+                      Navigator.pushNamed(
+                        context,
+                        "/signup/display-name",
+                      );
+                    }
                   } catch (error) {
+                    debugPrint(error.toString());
                     showDialog(
                         context: context,
                         builder: (context) => const IconDialog(
@@ -56,7 +78,7 @@ class _LandingPageState extends State<LandingPage> {
                               title: "Failed to sign up",
                               titleColor: Colors.redAccent,
                               content:
-                                  "something went wrong , please try again",
+                                  "something went wrong , please try again ",
                               actionText: "Try again",
                               actionColor: Colors.redAccent,
                             ));

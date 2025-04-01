@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mobile_project/models/dropdownable.dart';
+import 'package:mobile_project/models/dropdownable_model.dart';
 
 class CustomDropdownMenu extends StatelessWidget {
   final void Function(Dropdownable?) onSelected;
@@ -8,17 +8,20 @@ class CustomDropdownMenu extends StatelessWidget {
   final double? fontSize;
   final double? width;
   final String? hintText;
+  final Dropdownable? initial;
   const CustomDropdownMenu(
       {super.key,
       required this.onSelected,
       required this.items,
       this.fontSize,
       this.width,
-      this.hintText});
+      this.hintText,
+      this.initial});
 
   @override
   Widget build(BuildContext context) {
     return DropdownMenu<Dropdownable>(
+      initialSelection: initial,
       width: width,
       onSelected: onSelected,
       hintText: hintText,
